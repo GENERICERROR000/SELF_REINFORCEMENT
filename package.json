@@ -9,6 +9,6 @@
   "author": "Noah Kernis",
   "license": "ISC",
   "dependencies": {
-    "gossiper": "0.0.3"
+    "swim": "^0.6.0"
   }
 }
