@@ -1,10 +1,10 @@
 {
   "name": "internet_on_the_tv",
   "version": "0.0.0",
-  "description": "Server for taking part in Gosspi Protocol.",
+  "description": "Repo for Pcomp Final",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo TEST"
   },
   "author": "Noah Kernis",
   "license": "ISC",
