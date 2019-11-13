@@ -1,5 +1,5 @@
 'use strict';
-const app = require('./app/server')
+const app = require('./server/app')
 
 const config = {
 	'port': process.env.API_PORT || 3001
