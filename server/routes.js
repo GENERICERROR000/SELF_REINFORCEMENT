@@ -1,16 +1,18 @@
-var express = require('express');
+var express = require('express')
+
 var router = express.Router();
 
-// module.exports = (router) => {
-	// Homepage for API
+
+// Homepage for API
 router.get('/asd', (req, res) => res.send("WHY ARE YOU HERE? <br><br> THIS IS THE API HOMEPAGE.  WHY DID I EVEN MAKE THIS!?"));
 
-	// // Get All Sounds
-	// router.get('/api/v1/sounds', (req, res) => getSounds(req, res))
+router.post('/api/v1/sounds/new', (req, res) => saveSound(req, res))\
 
-	// // Create Sound
-	// router.post('/api/v1/sounds/new', (req, res) => saveSound(req, res))
-// }
+// // Get All Sounds
+// router.get('/api/v1/sounds', (req, res) => getSounds(req, res))
+
+// // Create Sound
+// router.post('/api/v1/sounds/new', (req, res) => saveSound(req, res))\
 
 // ----------> Helper Functions <----------
 

@@ -1,13 +1,13 @@
 {
-    "name": "internet_on_the_tv",
+    "name": "gossip",
     "version": "0.0.0",
-    "description": "Repo for Pcomp Final",
+    "description": "Repo for gossip server and client.",
     "main": "index.js",
     "scripts": {
         "start": "nodemon index.js",
         "test": "echo TEST"
     },
-    "author": "Noah Kernis",
+    "author": "GENERIC_ERROR",
     "license": "ISC",
     "dependencies": {
         "body-parser": "^1.19.0",
