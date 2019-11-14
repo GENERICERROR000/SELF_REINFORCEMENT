@@ -1,4 +1,6 @@
-var express = require('express')
+'use strict'
+var express = require('express');
+var gossip = require('./models/gossip');
 
 var router = express.Router();
 
@@ -6,7 +8,7 @@ var router = express.Router();
 // Homepage for API
 router.get('/asd', (req, res) => res.send("WHY ARE YOU HERE? <br><br> THIS IS THE API HOMEPAGE.  WHY DID I EVEN MAKE THIS!?"));
 
-router.post('/api/v1/sounds/new', (req, res) => saveSound(req, res))\
+router.post('/api/v1/sounds/new', (req, res) => saveSound(req, res))
 
 // // Get All Sounds
 // router.get('/api/v1/sounds', (req, res) => getSounds(req, res))

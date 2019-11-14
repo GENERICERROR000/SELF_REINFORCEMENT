@@ -1,11 +1,9 @@
-const app = require('./server/app')
+'use strict'
+var app = require('./server/app')
+var config = require('./server/config/config')
 
-const config = {
-	'port': process.env.API_PORT || 3001
-}
-
-// ----------> Init Server <----------
-app.listen(config.port, (err) => {
+// init server
+app.listen(config.local.port, (err) => {
 	if (err) console.log('Something went wrong', err)
-	console.log(`Server started on port ${config.port}...`)
+	console.log(`Server started on port ${config.local.port}...`)
 })

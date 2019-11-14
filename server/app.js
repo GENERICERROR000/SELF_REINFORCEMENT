@@ -1,7 +1,8 @@
-var express = require('express'),
-	bodyParser = require('body-parser'),
-	logger = require('morgan'),
-	helmet = require('helmet');
+'use strict'
+var express = require('express');
+var bodyParser = require('body-parser');
+var logger = require('morgan');
+var helmet = require('helmet');
 
 var app = express();
 
