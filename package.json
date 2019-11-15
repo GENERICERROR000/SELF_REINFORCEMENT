@@ -5,15 +5,25 @@
     "main": "index.js",
     "scripts": {
         "start": "nodemon index.js",
-        "test": "echo TEST"
+	"test": "echo TEST",
+	"clean": "rm -rf node_modules yarn.lock package-lock.json"
     },
     "author": "GENERIC_ERROR",
     "license": "ISC",
     "dependencies": {
+        "ansi-escapes": "^4.2.1",
         "body-parser": "^1.19.0",
+        "chalk": "^3.0.0",
         "express": "^4.17.1",
         "helmet": "^3.21.2",
+        "jsonpath": "^1.0.2",
+        "keypress": "^0.2.1",
+        "lodash": "^4.17.15",
         "morgan": "^1.9.1",
-        "sneeze": "^1.1.1"
+        "nid": "^0.3.2",
+        "optioner": "^4.2.0",
+        "pad": "^3.2.0",
+        "static-eval": "^2.0.2",
+        "swim": "^0.6.0"
     }
 }

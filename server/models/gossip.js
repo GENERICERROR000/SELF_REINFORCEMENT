@@ -1,6 +1,6 @@
 'use strict'
 // var Swim = require('swim');
-const sneeze = require('sneeze');
+const sneeze = require('../lib/sneeze');
 const config = require('./server/config/config')
 
 // TODO: Sneeze does not have method for updating meta data. Need data to spread via gossip. Need
