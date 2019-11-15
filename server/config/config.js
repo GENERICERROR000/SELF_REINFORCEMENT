@@ -1,11 +1,13 @@
 'use strict'
 module.exports = {
 	local: {
-		port: process.env.API_PORT || 8080, 
-		host: process.env.API_HOST || "127.0.0.1"
+		host: process.env.HOST || "127.0.0.1",
+		port: process.env.PORT || 8080, 
+		isBase: process.env.MODE || 'member',
+		isBase: process.env.NAME || 'name'
 	},
 	cluster: {
-		hostsToJoin: process.env.API_HOST || ['127.0.0.1:8081', '127.0.0.1:8082']
+		bases: process.env.BASES || ['127.0.0.1:8081', '127.0.0.1:8082']
 	}
 };
 

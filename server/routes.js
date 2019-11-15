@@ -1,8 +1,8 @@
 'use strict'
-var express = require('express');
-var gossip = require('./models/gossip');
+const express = require('express');
+const gossip = require('./models/gossip');
 
-var router = express.Router();
+const router = express.Router();
 
 
 // Homepage for API

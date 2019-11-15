@@ -1,10 +1,10 @@
 'use strict'
-var express = require('express');
-var bodyParser = require('body-parser');
-var logger = require('morgan');
-var helmet = require('helmet');
+const express = require('express');
+const bodyParser = require('body-parser');
+const logger = require('morgan');
+const helmet = require('helmet');
 
-var app = express();
+const app = express();
 
 // ----------> Set Middleware <----------
 
