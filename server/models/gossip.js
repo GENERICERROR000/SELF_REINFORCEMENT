@@ -32,7 +32,7 @@ exports.bootstrap = () => {
 			break;
 
 		default:
-			active = newMember(bases, host, port, name);
+			active = newBase(bases, host, port, name);
 	}
 
 	return active;
