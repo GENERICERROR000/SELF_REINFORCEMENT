@@ -3,7 +3,7 @@ module.exports = {
 	local: {
 		host: process.env.HOST || "127.0.0.1",
 		port: process.env.PORT || 3000, 
-		isBase: process.env.MODE || 'base',
+		mode: process.env.MODE || 'base',
 		name: process.env.NAME || 'node-' + new Date()
 	},
 	cluster: {

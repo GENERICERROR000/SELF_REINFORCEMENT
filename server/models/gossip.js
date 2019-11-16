@@ -12,9 +12,10 @@ exports.bootstrap = () => {
 	let bases = config.cluster.bases
 	let host = config.local.host
 	let port = config.local.port
+	let mode = config.local.mode
 	let name = config.local.name
-
-	switch (config.local.mode) {
+	
+	switch (mode) {
 		case 'base':
 			active = newBase(bases, host, port, name);
 			break;
@@ -118,9 +119,9 @@ const newMonitor = (bases, host, port, name) => {
 
 	let monitor = sneeze(opts)
 
-	monitor.on('add', console.log)
+	// monitor.on('add', console.log)
 
-	monitor.on('remove', console.log)
+	// monitor.on('remove', console.log)
 
 	monitor.join({
 		name: name
