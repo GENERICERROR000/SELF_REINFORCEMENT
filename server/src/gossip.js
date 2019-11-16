@@ -3,9 +3,6 @@
 const sneeze = require('../lib/sneeze');
 const config = require('../config/config')
 
-// TODO: Sneeze does not have method for updating meta data. Need data to spread via gossip. Need
-// 		 to add method. Either edit node_modules, or import sneeze.js and edit it (is a single file)
-
 // NOTE: This is to be called on server startup, not for api use
 exports.bootstrap = () => {
 	let active
@@ -88,7 +85,7 @@ const newMember = (bases, host, port, name) => {
 	return member;
 }
 
-// TODO: Change this to monitor settings or remove
+// TODO: Lots to do here...
 const newDisplay = (bases, host, port, name) => {
 	let opts = {
 		silent: true,
@@ -137,6 +134,7 @@ const newMonitor = (bases, host, port, name) => {
 
 // -----> End Bootstrap Helper Functions <-----
 
+// NOTE: This is to be called on server startup, not for api use
 exports.initialScore = function (member) {
 	console.log("");
 	console.log("-----INITIAL SCORE-----");

@@ -65,7 +65,7 @@ function Sneeze(options) {
 		var isbase = !!options.isbase
 
 		self.monitor = !!options.monitor.active ?
-			make_monitor(self, options) :
+			makeMonitor(self, options) :
 			_.noop
 
 		self.log = !!options.silent ?
@@ -79,7 +79,7 @@ function Sneeze(options) {
 				)
 			}
 
-		self.makeport = _.isFunction(options.port) ?
+		self.makePort = _.isFunction(options.port) ?
 			options.port :
 			function () {
 				var port = parseInt(options.port)
@@ -110,7 +110,7 @@ function Sneeze(options) {
 				}
 
 				//var port = (_.isFunction(options.port) ? options.port() : options.port )
-				var port = self.makeport()
+				var port = self.makePort()
 				var host = options.host + ':' + port
 				var incarnation = Date.now()
 
@@ -225,16 +225,16 @@ function Sneeze(options) {
 
 					self.info = swim_opts
 
-					_.each(swim.members(), updateinfo)
+					_.each(swim.members(), updateInfo)
 
 					// update on membership, e.g. node recovered or update on meta data
 					swim.on(Swim.EventType.Update, function onUpdate(info) {
-						updateinfo(info)
+						updateInfo(info)
 					})
 
 					// change on membership, e.g. new node or node died/left
 					swim.on(Swim.EventType.Change, function onChange(info) {
-						updateinfo(info)
+						updateInfo(info)
 					})
 
 					self.emit('ready')
@@ -246,7 +246,7 @@ function Sneeze(options) {
 					swim._events = {
 						update: function onUpdate(info) {
 							cb()
-							updateinfo(info)
+							updateInfo(info)
 						}
 					}
 
@@ -254,7 +254,7 @@ function Sneeze(options) {
 
 // ----- > End New OnUpdate Fn <-----
 
-				function updateinfo(m) {
+				function updateInfo(m) {
 					//console.log(m)
 
 					if (!m.meta) {
@@ -277,12 +277,12 @@ function Sneeze(options) {
 // ----- > End Score Meta Check <-----
 
 					if (0 === m.state) {
-						add_node(m)
+						addNode(m)
 					}
 
 					// Note: trigger happy
 					else if (2 === m.state) {
-						remove_node(m)
+						removeNode(m)
 					}
 				}
 			}
@@ -329,7 +329,7 @@ function Sneeze(options) {
 
 // -----> End Update Score Method <-----
 
-		function add_node(member) {
+		function addNode(member) {
 			var meta = member.meta
 			var host = member.host
 
@@ -348,7 +348,7 @@ function Sneeze(options) {
 			self.emit('add', meta, member)
 		}
 
-		function remove_node(member) {
+		function removeNode(member) {
 			var meta = member.meta
 			var host = member.host
 
@@ -369,7 +369,7 @@ function Sneeze(options) {
 }
 Util.inherits(Sneeze, Events.EventEmitter)
 
-function make_monitor(sneeze, options) {
+function makeMonitor(sneeze, options) {
 	var start = Date.now()
 	var allmembers = {}
 	var sortedmembers = []
@@ -385,7 +385,7 @@ function make_monitor(sneeze, options) {
 			m.host = host
 			m.meta = meta
 			m.state = member.state
-			m.meta = parse_meta(meta, options)
+			m.meta = parseMeta(meta, options)
 			m.tag = meta.tag$ || ''
 		} else {
 			m = {
@@ -396,7 +396,7 @@ function make_monitor(sneeze, options) {
 				state: member.state,
 				add: 0,
 				rem: 0,
-				meta: parse_meta(meta, options)
+				meta: parseMeta(meta, options)
 			}
 			m[kind] += 1
 		}
@@ -513,7 +513,7 @@ function make_monitor(sneeze, options) {
 	process.stdin.resume()
 }
 
-function parse_meta(meta, options) {
+function parseMeta(meta, options) {
 	var out = []
 	options.monitor.meta.forEach(function (mf) {
 		var v = JP.value(meta, mf)
