@@ -22,7 +22,7 @@ var Nid = require('nid')
 
 var Joi = Optioner.Joi
 
-var Package = require('./package.json')
+var Package = require('../../package.json')
 
 var DEFAULT_HOST = (module.exports.DEFAULT_HOST = '127.0.0.1')
 var DEFAULT_PORT = (module.exports.DEFAULT_PORT = 3000)
@@ -287,10 +287,28 @@ function Sneeze(options) {
 
 // -----> Start Update Score Method <-----
 
-		self.updateScore = function (scoreData) {
+		self.updateScore = function (carl, scoreData) {
+			let raw = swim.members(true)
+			let memberData = [...raw]
+			console.log('hit')
+
+			for (let i = 0; i < memberData.length; i++) {
+				// console.log('hit')
+				
+				// if (memberData[i].meta.name == carl) {
+				// 	console.log('hit')
+				// 	// console.log(memberData[i])
+				// 	return
+				// }
+			}
+
+			// swim.updateMeta(metaNew)
+
 			
-			console.log(swim.members().meta)
-			// swim.updateMeta(meta)
+
+			// console.log(meta)
+			// console.log("")
+			// console.log("")
 
 			return false
 		}

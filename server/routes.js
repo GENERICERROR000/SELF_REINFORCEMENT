@@ -4,9 +4,17 @@ const gossip = require('./models/gossip');
 
 const router = express.Router();
 
-const node = gossip.bootstrap()
+const member = gossip.bootstrap();
+
 // Homepage for API
-router.get('/test', (req, res) => node.updateScore(req, res));
+router.get('/test', function (req, res) {
+	member.updateScore(req, res)
+});
+
+router.get('/carl', function (req, res) {
+	res.end('<h1>CARL</h1>')
+});
+// router.get('/test', (req, res) => member.updateScore(req, res));
 
 // // Get All Sounds
 // router.get('/api/v1/sounds', (req, res) => getSounds(req, res))

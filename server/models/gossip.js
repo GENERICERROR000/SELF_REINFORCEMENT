@@ -1,7 +1,7 @@
 'use strict'
 // var Swim = require('swim');
 const sneeze = require('../lib/sneeze');
-const config = require('./server/config/config')
+const config = require('../config/config')
 
 // TODO: Sneeze does not have method for updating meta data. Need data to spread via gossip. Need
 // 		 to add method. Either edit node_modules, or import sneeze.js and edit it (is a single file)
@@ -52,7 +52,7 @@ const newBase = (bases, host, port, name) => {
 		port: port
 	};
 
-	base = sneeze(opts);
+	let base = sneeze(opts);
 
 	base.join({
 		name: name
@@ -141,17 +141,26 @@ exports.getMembers = (sneeze) => {
 	// sneeze.members()
 }
 
-exports.updateScore = (req, res) => {
+exports.updateScore = function (req, res) {
 	let newScores = {}
 
-	let err = sneeze.updateScore(newScores)
+	// console.log('poop')
+	// console.log('poop')
+	// console.log('poop')
+	// console.log('poop')
+	// console.log('poop')
+	// console.log('poop')
 
-	if (err) {
-		console.error("ERROR:", err)
-	} else {
-		res.sendStatus(201)
-	}
-	
+	// let err = sneeze.updateScore(config.local.name, newScores)
+
+	// res.end('<h1>THAT WORKED</h1>')
+
+	// if (err) {
+	// 	console.error("ERROR:", err)
+	// } else {
+	// 	res.status(201).send('<h1>THAT WORKED</h1>')
+	// }
+	res.end('<h1>THAT WORKED</h1>')
 }
 
 exports.joinCluster = (sneeze) => {
