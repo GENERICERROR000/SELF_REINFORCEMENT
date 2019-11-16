@@ -143,12 +143,12 @@ function Sneeze(options) {
 
 // ----- > Start Score Meta Data <-----
 				
-				meta.score$ = false || {
-					id: "",
-					love: "",
-					hate: "",
-					noOpinion: ""
-				}; // TODO: figure this object out
+				meta.score = false || {
+					id: "default",
+					love: "default",
+					hate: "default",
+					noOpinion: "default"
+				} // TODO: figure this object out
 
 // ----- > End Score Meta Data <-----
 
@@ -173,7 +173,7 @@ function Sneeze(options) {
 					meta.tag$,
 					bases,
 					swim_opts,
-					meta.score$
+					meta.score
 				)
 
 				swim = new Swim(swim_opts)
@@ -254,7 +254,7 @@ function Sneeze(options) {
 					}
 // ----- > Start Score Meta Check <-----
 
-					if (m.meta.score$ === meta.score$) {
+					if (m.meta.score === meta.score) {
 						return
 					}
 
@@ -296,8 +296,7 @@ function Sneeze(options) {
 				
 				if (memberData[i].meta.name == name) {
 					newMeta = {...memberData[i].meta}
-					console.log(newMeta)
-					newMeta.score$ = scoreData
+					newMeta.score = scoreData
 				}
 			}
 

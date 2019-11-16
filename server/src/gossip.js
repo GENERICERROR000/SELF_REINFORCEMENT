@@ -113,7 +113,7 @@ const newMonitor = (bases, host, port, name) => {
 		port: port,
 		monitor: {
 			active: true,
-			meta: ['name']
+			meta: ['score']
 		}
 	};
 
@@ -143,7 +143,12 @@ exports.getMembers = (sneeze) => {
 }
 
 exports.updateScore = function (member, req, res) {
-	let newScores = {}; // NOT: Will use req
+	let newScores = {
+		id: "catdog",
+		love: "carl",
+		hate: "carla",
+		noOpinion: "haha"
+	}; // TODO: Figure out real obect
 
 	let err = member.updateLocalScore(config.local.name, newScores);
 
