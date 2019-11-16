@@ -62,16 +62,18 @@
 
 ## Math for Score Algo
 
+[Source of Math](https://sciencing.com/calculate-class-grade-7379797.html)
+
 Example - we are server 4 (of 7):
 
-Score can sum to 100. Five categories comprise the sum, each accounting for 20% of the total. A score above 66.6 is Love. A score below 33.3 is Hate. In the middle is no opinion
+Score can sum to 100. Five categories comprise the sum, each accounting for 20% of the total. A score above 66.67 is Love. A score below 33.33 is Hate. In the middle is No Opinion.
 
 The following are the given scores provided by each client (before applying bias to self):
 
 1: 25
 2: 90
 3: 80
-4: 68 (self)
+4: *68* (self)
 5: 46
 6: 18
 7: 38
@@ -106,7 +108,7 @@ weight+3: 0 / (20 + 10 + 0) =  0
 
 sum: .268 + .1876 + .1485 + .0297 + 0 + 0 = .6338
 
-group_weighted_score: .6338 * 100 = 63.38
+group_weighted_score: .6338 * 100 = *63.38*
 
 3) Using weights below, apply weighting factor to get final score
 
@@ -119,7 +121,7 @@ group: 63.38/100 * .25 = .15845
 
 sum: .51 + .15845 = .66845
 
-final_weighted_score: .66845 * 100 = 66.85
+final_weighted_score: .66845 * 100 = *66.85*
 
 [b) trust group and self the same]
 weight_self = .50
@@ -130,7 +132,7 @@ group: 63.38/100 * .50 = .3169
 
 sum: .34 + .3169 = .6569
 
-final_weighted_score: .6569 * 100 = 65.69
+final_weighted_score: .6569 * 100 = *65.69*
 
 [c) trust group more]
 weight_self = .25
@@ -141,12 +143,12 @@ group: 63.38/100 * .75 = .47535
 
 sum: .17 + .47535 = .64535
 
-final_weighted_score: .64535 * 100 = 64.54
+final_weighted_score: .64535 * 100 = *64.54*
 
 [d) trust self only]
 
-final_score: 68
+final_score: *68*
 
 [e) trust group only]
 
-final_score: 63.38
+final_score: *63.38*

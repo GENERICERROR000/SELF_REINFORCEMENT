@@ -227,16 +227,32 @@ function Sneeze(options) {
 
 					_.each(swim.members(), updateinfo)
 
+					// update on membership, e.g. node recovered or update on meta data
 					swim.on(Swim.EventType.Update, function onUpdate(info) {
 						updateinfo(info)
 					})
 
+					// change on membership, e.g. new node or node died/left
 					swim.on(Swim.EventType.Change, function onChange(info) {
 						updateinfo(info)
 					})
 
 					self.emit('ready')
 				})
+
+// ----- > Start New OnUpdate Fn <-----
+
+				self.newOnUpdate = function (cb) {
+					swim._events = {
+						update: function onUpdate(info) {
+							cb()
+							updateinfo(info)
+						}
+					}
+
+				}
+
+// ----- > End New OnUpdate Fn <-----
 
 				function updateinfo(m) {
 					//console.log(m)
@@ -285,6 +301,14 @@ function Sneeze(options) {
 			return self
 		}
 
+// -----> Start Return Score Method <-----
+
+		self.getLocalScore = function (name, scoreData) {
+			return swim.members(true).shift()
+		}
+
+// -----> Start Return Score Method <-----
+
 // -----> Start Update Score Method <-----
 
 		self.updateLocalScore = function (name, scoreData) {
@@ -292,8 +316,6 @@ function Sneeze(options) {
 			let memberData = swim.members(true)
 
 			for (let i = 0; i < memberData.length; i++) {
-				
-				
 				if (memberData[i].meta.name == name) {
 					newMeta = {...memberData[i].meta}
 					newMeta.score = scoreData
@@ -302,7 +324,7 @@ function Sneeze(options) {
 
 			swim.updateMeta(newMeta)
 
-			return false
+			return newMeta
 		}
 
 // -----> End Update Score Method <-----

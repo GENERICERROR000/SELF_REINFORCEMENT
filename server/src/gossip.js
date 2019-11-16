@@ -10,10 +10,7 @@ const config = require('../config/config')
 exports.bootstrap = () => {
 	let active
 	let bases = config.cluster.bases
-	let host = config.local.host
-	let port = config.local.port
-	let mode = config.local.mode
-	let name = config.local.name
+	let { host, port, mode, name } = config.local
 	
 	switch (mode) {
 		case 'base':
@@ -22,10 +19,18 @@ exports.bootstrap = () => {
 
 		case 'member':
 			active = newMember(bases, host, port, name);
+			active.newOnUpdate(function () {
+				console.log("")
+				console.log('CHANGE MOTHERFUCKER')
+			})
 			break;
 
 		case 'display':
 			active = newDisplay(bases, host, port, name);
+			active.newOnUpdate(function () {
+				console.log("")
+				console.log('CHANGE MOTHERFUCKER')
+			})
 			break;
 
 		case 'monitor':
@@ -72,9 +77,9 @@ const newMember = (bases, host, port, name) => {
 
 	let member = sneeze(opts)
 
-	member.on('add', console.log)
+	// member.on('add', console.log)
 
-	member.on('remove', console.log)
+	// member.on('remove', console.log)
 
 	member.join({
 		name: name
@@ -113,7 +118,7 @@ const newMonitor = (bases, host, port, name) => {
 		port: port,
 		monitor: {
 			active: true,
-			meta: ['score']
+			meta: ['name', 'score']
 		}
 	};
 
@@ -132,14 +137,20 @@ const newMonitor = (bases, host, port, name) => {
 
 // -----> End Bootstrap Helper Functions <-----
 
-exports.getLocalState = (sneeze) => {
-	// This public member variable is null until the instance sucessfully joins a network.It is descriptive object containing meta data about this instance.
-	// sneeze.info
+exports.initialScore = function (member) {
+	console.log("");
+	console.log("-----INITIAL SCORE-----");
+	console.log(member.getLocalScore().meta.score);
 }
 
-exports.getMembers = (sneeze) => {
-	// Returns an array of member description objects.These are the currently known and healthy members.
-	// sneeze.members()
+exports.getLocalMeta = (member) => {
+	let localMeta = member.getLocalScore();
+	console.log(localMeta);
+}
+
+exports.getMembers = (member) => {
+	let members = member.members();
+	console.log(members);
 }
 
 exports.updateScore = function (member, req, res) {
@@ -148,23 +159,25 @@ exports.updateScore = function (member, req, res) {
 		love: "carl",
 		hate: "carla",
 		noOpinion: "haha"
-	}; // TODO: Figure out real obect
+	}; // TODO: Figure out real object
 
-	let err = member.updateLocalScore(config.local.name, newScores);
+	let newMeta = member.updateLocalScore(config.local.name, newScores);
+	
+	console.log("");
+	console.log("-----NEW SCORE-----");
+	console.log(newMeta.score);
 
-	if (err) {
-		console.error("ERROR:", err)
+	if (!newMeta) {
+		console.error("ERROR:", err);
 	} else {
-		res.end('<h1>THAT WORKED</h1>')
-	}
+		res.end('<h1>THAT WORKEDm</h1><h3>' + new Date() + '</h3>');
+	};
+}	
 
-}
+// exports.joinCluster = (sneeze) => {
 
-exports.joinCluster = (sneeze) => {
+// }
 
-}
+// exports.leaveCluster = (sneeze) => {
 
-exports.leaveCluster = (sneeze) => {
-	// Leave the network.You can also leave just by exiting the process - SWIM is designed to handle that.This method is just to give you extra control.
-	// sneeze.leave()
-}
+// }
