@@ -287,28 +287,21 @@ function Sneeze(options) {
 
 // -----> Start Update Score Method <-----
 
-		self.updateScore = function (carl, scoreData) {
-			let raw = swim.members(true)
-			let memberData = [...raw]
-			console.log('hit')
+		self.updateLocalScore = function (name, scoreData) {
+			let newMeta
+			let memberData = swim.members(true)
 
 			for (let i = 0; i < memberData.length; i++) {
-				// console.log('hit')
 				
-				// if (memberData[i].meta.name == carl) {
-				// 	console.log('hit')
-				// 	// console.log(memberData[i])
-				// 	return
-				// }
+				
+				if (memberData[i].meta.name == name) {
+					newMeta = {...memberData[i].meta}
+					console.log(newMeta)
+					newMeta.score$ = scoreData
+				}
 			}
 
-			// swim.updateMeta(metaNew)
-
-			
-
-			// console.log(meta)
-			// console.log("")
-			// console.log("")
+			swim.updateMeta(newMeta)
 
 			return false
 		}

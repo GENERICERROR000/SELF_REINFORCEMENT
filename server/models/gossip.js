@@ -141,26 +141,17 @@ exports.getMembers = (sneeze) => {
 	// sneeze.members()
 }
 
-exports.updateScore = function (req, res) {
-	let newScores = {}
+exports.updateScore = function (member, req, res) {
+	let newScores = {}; // NOT: Will use req
 
-	// console.log('poop')
-	// console.log('poop')
-	// console.log('poop')
-	// console.log('poop')
-	// console.log('poop')
-	// console.log('poop')
+	let err = member.updateLocalScore(config.local.name, newScores);
 
-	// let err = sneeze.updateScore(config.local.name, newScores)
+	if (err) {
+		console.error("ERROR:", err)
+	} else {
+		res.end('<h1>THAT WORKED</h1>')
+	}
 
-	// res.end('<h1>THAT WORKED</h1>')
-
-	// if (err) {
-	// 	console.error("ERROR:", err)
-	// } else {
-	// 	res.status(201).send('<h1>THAT WORKED</h1>')
-	// }
-	res.end('<h1>THAT WORKED</h1>')
 }
 
 exports.joinCluster = (sneeze) => {

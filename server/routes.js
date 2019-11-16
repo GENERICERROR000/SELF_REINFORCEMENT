@@ -8,12 +8,13 @@ const member = gossip.bootstrap();
 
 // Homepage for API
 router.get('/test', function (req, res) {
-	member.updateScore(req, res)
+	gossip.updateScore(member, req, res)
 });
 
 router.get('/carl', function (req, res) {
 	res.end('<h1>CARL</h1>')
 });
+
 // router.get('/test', (req, res) => member.updateScore(req, res));
 
 // // Get All Sounds
