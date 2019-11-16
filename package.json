@@ -5,10 +5,11 @@
     "main": "index.js",
     "scripts": {
         "start": "nodemon index.js",
-	"test": "echo TEST",
+	"base": "PORT='3000' MODE='base' NAME='base0' nodemon index.js",
+	"member": "PORT='3001' MODE='member' NAME='member0' nodemon index.js",
 	"clean": "rm -rf node_modules yarn.lock package-lock.json"
     },
-    "author": "GENERIC_ERROR",
+    "author": "Noah Kernis -//-",
     "license": "ISC",
     "dependencies": {
         "ansi-escapes": "^4.2.1",

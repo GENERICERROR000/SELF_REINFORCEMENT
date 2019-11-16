@@ -141,8 +141,17 @@ exports.getMembers = (sneeze) => {
 	// sneeze.members()
 }
 
-exports.updateLocalState = (sneeze) => {
+exports.updateScore = (req, res) => {
+	let newScores = {}
 
+	let err = sneeze.updateScore(newScores)
+
+	if (err) {
+		console.error("ERROR:", err)
+	} else {
+		res.sendStatus(201)
+	}
+	
 }
 
 exports.joinCluster = (sneeze) => {

@@ -4,11 +4,9 @@ const gossip = require('./models/gossip');
 
 const router = express.Router();
 
-
+const node = gossip.bootstrap()
 // Homepage for API
-router.get('/asd', (req, res) => res.send("WHY ARE YOU HERE? <br><br> THIS IS THE API HOMEPAGE.  WHY DID I EVEN MAKE THIS!?"));
-
-router.post('/api/v1/sounds/new', (req, res) => saveSound(req, res))
+router.get('/test', (req, res) => node.updateScore(req, res));
 
 // // Get All Sounds
 // router.get('/api/v1/sounds', (req, res) => getSounds(req, res))

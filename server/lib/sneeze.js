@@ -1,6 +1,8 @@
 /*
   MIT License,
   Copyright (c) 2016-2018, Richard Rodger and other contributors.
+
+  Changes made by Noah Kernis -//- 2019
 */
 
 'use strict'
@@ -139,6 +141,17 @@ function Sneeze(options) {
 					}
 				})
 
+// ----- > Start Score Meta Data <-----
+				
+				meta.score$ = false || {
+					id: "",
+					love: "",
+					hate: "",
+					noOpinion: ""
+				}; // TODO: figure this object out
+
+// ----- > End Score Meta Data <-----
+
 				swim_opts.local = {
 					host: host,
 					meta: meta,
@@ -159,7 +172,8 @@ function Sneeze(options) {
 					meta.identifier$,
 					meta.tag$,
 					bases,
-					swim_opts
+					swim_opts,
+					meta.score$
 				)
 
 				swim = new Swim(swim_opts)
@@ -238,6 +252,13 @@ function Sneeze(options) {
 					if (m.meta.identifier$ === meta.identifier$) {
 						return
 					}
+// ----- > Start Score Meta Check <-----
+
+					if (m.meta.score$ === meta.score$) {
+						return
+					}
+
+// ----- > End Score Meta Check <-----
 
 					if (0 === m.state) {
 						add_node(m)
@@ -263,6 +284,18 @@ function Sneeze(options) {
 			members = {}
 			return self
 		}
+
+// -----> Start Update Score Method <-----
+
+		self.updateScore = function (scoreData) {
+			
+			console.log(swim.members().meta)
+			// swim.updateMeta(meta)
+
+			return false
+		}
+
+// -----> End Update Score Method <-----
 
 		function add_node(member) {
 			var meta = member.meta
