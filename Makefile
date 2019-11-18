@@ -21,7 +21,7 @@ c_push:
 
 c_run:
 	# TODO: FINISH...
-	@ docker run nkernis/gossip:${TAG}
+	@ docker run --rm -t -i nkernis/gossip:${TAG}
 
 
 .PHONY : base
