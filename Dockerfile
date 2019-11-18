@@ -10,11 +10,15 @@ ENV MODE=""
 ENV NAME=""
 ENV BASES=""
 
-COPY . /usr/src/app
+COPY --chown=node . /usr/src/app
 
 WORKDIR /usr/src/app
 
-RUN npm install
+RUN chmod +x ./bin/entrypoint.sh
+
+RUN npm install 
+
+USER node
 
 ENTRYPOINT ["/usr/src/app/bin/entrypoint.sh"]
 

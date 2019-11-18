@@ -1,6 +1,3 @@
-build:
-	@ docker build -t gossip:${TAG} .
-
 base:
 	@ echo 'carl'
     # 1) Create network needed
@@ -15,5 +12,16 @@ monitor:
 
 display:
 	@ echo 'carl'
+
+c_build:
+	@ docker build -t nkernis/gossip:${TAG} .
+
+c_push:
+	@ docker push nkernis/gossip:${TAG}
+
+c_run:
+	# TODO: FINISH...
+	@ docker run nkernis/gossip:${TAG}
+
 
 .PHONY : base
