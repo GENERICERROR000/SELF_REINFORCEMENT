@@ -8,7 +8,8 @@ exports.bootstrap = () => {
 	let active
 	let bases = config.cluster.bases
 	let { host, port, mode, name } = config.local
-	
+	mode="monitor"
+
 	switch (mode) {
 		case 'base':
 			active = newBase(bases, host, port, name);
@@ -168,7 +169,7 @@ exports.updateScore = function (member, req, res) {
 	if (!newMeta) {
 		console.error("ERROR:", err);
 	} else {
-		res.end('<h1>THAT WORKEDm</h1><h3>' + new Date() + '</h3>');
+		res.end('<h1>THAT WORKED</h1><h3>' + new Date() + '</h3>');
 	};
 }	
 

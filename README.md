@@ -2,6 +2,9 @@
 
 ## TODO
 
+1. NOTE: BodyPix - start
+2. NOTE: Using vagrant or vm, test multiple  comps
+
 ## Play Testing
 
 ### Prompt
