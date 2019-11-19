@@ -12,19 +12,21 @@ set -euo pipefail
 # 3) MAYBE RPI IS A GOOD IDEA?
 
 # Machine 1 (manager)
-docker swarm init --advertise-addr <MANAGER-IP>
 
-docker swarm join-token worker # ???
+docker swarm init --advertise-addr <MANAGER-IP>:2377
+
+# Get token if above didn't output
+# docker swarm join-token worker
 
 # Machine 2 (worker)
 docker swarm join --token <TOKEN> <MANAGER-IP>:2377
 
 # Machine 1
 docker node ls
-docker network create --driver overlay gossip-net
+docker network create -d overlay gossip-net
 docker network ls
 
-# Service 1
+# Base
 docker service create \
 	--replicas 1 \
 	--network gossip-net \
@@ -35,9 +37,26 @@ docker service create \
 	-e NAME=base \
 	-e BASES=base:3001 \
 	-e MODE=base \
-	nkernis/gossip:${TAG}
+	nkernis/gossip:0.0.0
 
-# Service 2
+docker service logs -f base
+
+# Monitor
+docker service create \
+	--replicas 1 \
+	--network gossip-net \
+	-p 3000:3000 \
+	--name monitor \
+	-e HOST=monitor \
+	-e PORT=3000 \
+	-e NAME=monitor  \
+	-e BASES=base:3001 \
+	-e MODE=monitor \
+	nkernis/gossip:0.0.0
+
+docker service logs -f monitor
+
+# Member
 docker service create \
 	--replicas 1 \
 	--network gossip-net \
@@ -48,4 +67,6 @@ docker service create \
 	-e NAME=member  \
 	-e BASES=base:3001 \
 	-e MODE=member \
-	nkernis/gossip:${TAG}
+	nkernis/gossip:0.0.0
+
+docker service logs -f member

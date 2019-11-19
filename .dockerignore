@@ -1,4 +1,8 @@
 .gitignore
 node_modules/
-README.node_modules
+README.md
 package-lock.json
+Vagrantfile
+Dockerfile
+Makefile
+cluster.yml

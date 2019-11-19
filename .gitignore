@@ -1,52 +1,5 @@
+.vagrant/
 
-Skip to content
-Pull requests
-Issues
-Marketplace
-Explore
-@nkernis
-
-2.9k
-91.6k
-
-    46.7k
-
-github/gitignore
-Code
-Pull requests 120
-Actions
-Projects 0
-Security
-Insights
-gitignore/Node.gitignore
-@karlhorky karlhorky Comment out / add note about conflicting gitignore lines (#3204) 2644536 20 days ago
-@stuartpb
-@shiftkey
-@TennyZhuang
-@venatoria
-@ro31337
-@Richienb
-@melonmanchan
-@gouthamve
-@jucrouzet
-@cheddar
-@arcresu
-@kesoji
-@tejashah88
-@sroberts
-@SimonSiefke
-@segayuu
-@MCSH
-@rgbkrk
-@rsolomo
-@peat
-@noinkling
-@ndelvalle
-@MikeRalphson
-@lmedson
-@unixchad
-@kerimdzhanov
-105 lines (76 sloc) 1.57 KB
 # Logs
 logs
 *.log
@@ -151,18 +104,3 @@ dist
 
 # TernJS port file
 .tern-port
-
-    © 2019 GitHub, Inc.
-    Terms
-    Privacy
-    Security
-    Status
-    Help
-
-    Contact GitHub
-    Pricing
-    API
-    Training
-    Blog
-    About
-
