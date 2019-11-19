@@ -2,15 +2,14 @@
 
 set -euo pipefail
 
+# WARN: NOT MEANT TO BE RUN - GENERAL INSTRUCTIONS
+
 # TODO: TEST THIS: 
 # MAC - TO - MAC IS NOT EASY FOR SWARM
 # 1) vagrant TO CREATE VMS 
 # 2) docker-machiine https://medium.com/@thomas.mylab33/running-docker-swarm-on-two-macbooks-2029f310b2df 
 	# - https://github.com/senecajs/ramanujan/blob/master/docker/docker.txt
 # 3) MAYBE RPI IS A GOOD IDEA?
-
-
-#####
 
 # Machine 1 (manager)
 docker swarm init --advertise-addr <MANAGER-IP>
