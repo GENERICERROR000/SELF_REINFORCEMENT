@@ -2,13 +2,7 @@
 
 ## TODO
 
-### 1. NOTE: BodyPix - start
-
-- After an image is fed through the model, it gets converted into a two-dimensional image with float values between 0 and 1 at each pixel indicating the probability that the person exists in that pixel
-	- A value called the “segmentation threshold” represents the minimum value a pixel’s score must have to be considered part of a person
-	- Using the segmentation threshold, those 0–1 float values become binary 0s or 1s (ie. if the threshold is 0.5, any values over 0.5 are converted to 1s and any values below 0.5 are converted to 0s)
-
-#### 2. NOTE: Using vagrant or vm, test multiple  comps
+0. WARN Using private net for computers means not internet access (libraries and containers!) Talk to Tom or Rob about allocating and IP for the router?
 
 ## Play Testing
 

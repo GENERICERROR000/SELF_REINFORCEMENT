@@ -2,30 +2,17 @@ let net;
 let video;
 let segmentation;
 let img;
-let carl = 0
-
-// const options = {
-// 	flipHorizontal: false,
-// 	outputStride: 8,
-// 	internalResolution: 'medium',
-// 	segmentationThreshold: 0.5
-// }
+let carl = 0;
 
 // arguments for estimating body part segmentation.
 const outputStride = 16;
 const segmentationThreshold = 0.5;
 
 async function setup() {
-	// createCanvas(windowWidth, windowHeight);
-	createCanvas(400, 400);
-
-	// load up your video
+	noCanvas();
 	video = await createCapture(VIDEO, startNet);
-	video.size(width, height);
-	// video.hide(); // Hide the video element, and just show the canvas
-
-	// Create a palette - uncomment to test below
-	// createRGBPalette();
+	video.style('margin', 'auto');
+	video.style('width', '400px');
 }
 
 async function startNet() {
@@ -36,33 +23,24 @@ async function startNet() {
 
 async function gotResults(err, result) {
 	if (err) {
-		console.log(err)
-		return
+		console.log(err);
+		return;
 	}
 
 	segmentation = result;
 
 	if (carl == 0) {
-		console.log(segmentation)
-		carl = 1
+		// segmentation score
+		// console.log(segmentation.allPoses[0].keypoints[0].score);
+		// console.log(segmentation);
+
+		// media stream for broadcasting
+		console.log(video.elt.srcObject);
+		// console.log(video);
+
+		carl = 1;
 	} 
 
-	// background(255, 0, 0);
-	// image(video, 0, 0, width, height)
-	// image(segmentation.partMask, 0, 0, width, height)
-
-	let newSegmentation = await net.segmentPersonParts(video.elt, outputStride, segmentationThreshold)
-	gotResults(false, newSegmentation)
-}
-
-function createRGBPalette() {
-	colorMode(RGB);
-	options.palette = bodypix.config.palette;
-	Object.keys(options.palette).forEach(part => {
-		const r = floor(random(255));
-		const g = floor(random(255));
-		const b = floor(random(255));
-		const c = color(r, g, b)
-		options.palette[part].color = c;
-	});
+	let newSegmentation = await net.segmentPersonParts(video.elt, outputStride, segmentationThreshold);
+	gotResults(false, newSegmentation);
 }

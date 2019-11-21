@@ -10,9 +10,17 @@ const app = express();
 
 app.use(logger('common'));
 app.use(helmet());
-
 app.use(require('./routes'));
-app.use(express.static('public'));
 app.use(bodyParser.json());
+
+app.use(express.static('public'));
+
+app.use('/base', (req, res, next) => {
+	express.static('rec')(req, res, next);
+});
+
+app.use('/member', (req, res, next) => {
+	express.static('sen')(req, res, next);
+});
 
 module.exports = app;
