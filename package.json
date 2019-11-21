@@ -17,6 +17,7 @@
         "ansi-escapes": "^4.2.1",
         "body-parser": "^1.19.0",
         "chalk": "^3.0.0",
+        "cors": "^2.8.5",
         "express": "^4.17.1",
         "helmet": "^3.21.2",
         "jsonpath": "^1.0.2",
@@ -26,6 +27,8 @@
         "nid": "^0.3.2",
         "optioner": "^4.2.0",
         "pad": "^3.2.0",
+        "peer": "^0.2.10",
+        "remove": "^0.1.5",
         "static-eval": "^2.0.2",
         "swim": "^0.6.0"
     }

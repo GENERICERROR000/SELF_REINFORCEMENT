@@ -2,8 +2,8 @@
 
 const peer = new Peer('base', {
 	host: 'localhost',
-	port: 9000,
-	path: '/'
+	port: 3000,
+	path: '/peer'
 }) ;
 
 const members = [];
@@ -18,7 +18,7 @@ peer.on('connection', (conn) => {
 
 function membersAvailable() {
 	if (members.length > 0) {
-		console.log("change");
+		console.log("member checked in");
 		startStreamCycle();
 	} else {
 		setTimeout(membersAvailable, 5000);
@@ -35,17 +35,19 @@ function startStreamCycle() {
 		index++;
 	}
 
+	// TODO: Close connection to old one
+	// TODO: Remove it's id from members array?
 	setTimeout(startStreamCycle, 5000);
 }
 
 peer.on('call', call => {
-	const startChat = async () => {
+	startChat();
+
+	async function startChat() {
 		call.answer();
 		
 		call.on('stream', (remoteStream) => {
 			document.querySelector('video#remote').srcObject = remoteStream
 		});
 	}
-
-	startChat();
 });

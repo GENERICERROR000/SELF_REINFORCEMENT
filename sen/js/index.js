@@ -1,17 +1,15 @@
 // NOTE: MEMBER
 
-// TODO: can use random gen instsead of 'member' - check Peer constr.
 const peer = new Peer({
 	host: '192.168.1.182',
-	port: 9000,
-	path: '/'
+	port: 3000,
+	path: '/peer'
 });
 
 // Connect to base and let it know this member exists
 peer.connect('base');
 
 peer.on('connection', (conn) => {
-	console.log(conn);
 	startChat();
 });
 
@@ -24,6 +22,8 @@ async function startChat() {
 	document.querySelector('video#local').srcObject = localStream;
 	
 	const call = peer.call('base', localStream);
+
+	// TODO: Handle stream close
 }
 
 
