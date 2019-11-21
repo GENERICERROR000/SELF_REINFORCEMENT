@@ -22,8 +22,11 @@ async function startChat() {
 	document.querySelector('video#local').srcObject = localStream;
 	
 	const call = peer.call('base', localStream);
+	console.log("stream start");
 
-	// TODO: Handle stream close
+	call.on('close', () => {
+		console.log("stream end");
+	});
 }
 
 
