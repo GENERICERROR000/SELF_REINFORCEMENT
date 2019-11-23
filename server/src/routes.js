@@ -1,17 +1,24 @@
 'use strict'
 const express = require('express');
+const config = require('../config/config');
 const gossip = require('./gossip');
 
+// ----------> Get Router <----------
+
 const router = express.Router();
+
+// ----------> Bootstrap Gossip Member <----------
+
 const member = gossip.bootstrap();
 
-gossip.initialScore(member)
+gossip.initialScore(member);
 
-router.get('/test', function (req, res) {
-	gossip.updateScore(member, req, res)
-});
+// ----------> Define API Routes <----------
 
-router.post('/api/score', function (req, res) {
-	gossip.updateScore(member, req, res)
-});
+if (config.local.mode == 'member') {
+	router.post('/api/score', function (req, res) {
+		gossip.updateScore(member, req, res)
+	});
+}
 
+module.exports = router;

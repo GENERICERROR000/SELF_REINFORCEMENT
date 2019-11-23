@@ -1,55 +1,67 @@
 // NOTE: OPINION
 
+let localStream;
 let net;
-let video;
-let segmentation;
 let img;
-let carl = 0; // WARN: Remove when dev is dooone
-
-const peer = new Peer({
-	host: '10.18.71.244', // TODO: Set on server startup
-	port: 3000,
-	path: '/api/peer'
-});
-
-// -----> Stream Camera <-----
-
-peer.on('connection', (conn) => {
-	startChat();
-});
-
-async function startChat() {
-	const call = peer.call('base', video.elt.srcObject);
-	console.log("stream start");
-
-	call.on('close', () => {
-		console.log("stream end");
-	});
-}
-
-// -----> ML Segmentation <-----
+let segmentation;
+let videoElement;
+let carl = 0; // WARN: Remove when dev is done
 
 const outputStride = 16;
 const segmentationThreshold = 0.5;
 
-async function setup() {
-	noCanvas();
-	video = await createCapture(VIDEO, startNet);
-	localStream = 
-	video.style('margin', 'auto');
-	video.style('width', '400px');
+// -----> Create New Peer - Opinion <-----
+
+const peer = new Peer({
+	host: 'localhost', // TODO: Set on server startup
+	port: 3000,
+	path: '/api/peer'
+});
+
+// -----> ML Segmentation <-----
+
+bootstrap();
+
+async function bootstrap() {
+	let opts = {
+		audio: false,
+		video: true
+	};
+
+	videoElement = await setupCamera();
+
+	startNet();
+}
+
+async function setupCamera() {
+	const opts = {
+		audio: false,
+		video: true
+	};
+
+	const vidEl = document.getElementById('local');
+
+	vidEl.srcObject = await navigator.mediaDevices.getUserMedia(opts);
+
+	return new Promise((resolve) => {
+		vidEl.onloadedmetadata = () => {
+			vidEl.width = vidEl.videoWidth;
+			vidEl.height = vidEl.videoHeight;
+			resolve(vidEl);
+		};
+	});
 }
 
 async function startNet() {
 	net = await bodyPix.load();
-	let segmentation = await net.segmentPersonParts(video.elt, outputStride, segmentationThreshold)
-	gotResults(false, segmentation)
+	let segmentation = await net.segmentPersonParts(videoElement, outputStride, segmentationThreshold);
+	sendOpinion(false, segmentation);
 
 	// Connect to base and let it know this member exists
-	peer.connect('base');
+	peer.connect('display');
 }
 
-async function gotResults(err, result) {
+async function sendOpinion(err, result) {
 	if (err) {
 		console.log(err);
 		return;
@@ -68,8 +80,8 @@ async function gotResults(err, result) {
 		carl = 1;
 	}
 
-	let newSegmentation = await net.segmentPersonParts(video.elt, outputStride, segmentationThreshold);
-	gotResults(false, newSegmentation);
+	let newSegmentation = await net.segmentPersonParts(videoElement, outputStride, segmentationThreshold);
+	sendOpinion(false, newSegmentation); // TODO: calling this should be done by a set timeout
 }
 
 // TODO: MAKE THIS FN YO!
@@ -85,3 +97,19 @@ async function gotResults(err, result) {
 // 	let res = await fetch('baseURL', fetchOptions);
 // 	console.log(res.status);
 // }
+
+// -----> Stream Camera <-----
+
+// When display connects, send stream of local camera
+peer.on('connection', (conn) => {
+	startChat();
+
+	async function startChat() {
+		const call = peer.call('display', videoElement.srcObject);
+		console.log("stream start");
+
+		call.on('close', () => {
+			console.log("stream end");
+		});
+	}
+});

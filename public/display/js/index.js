@@ -1,51 +1,61 @@
 // NOTE: DISPLAY
 
-let members = [];
-let member;
+let opinions = [];
+let opinion;
 let index = 0;
 let oldCall;
 
-const peer = new Peer('base', {
-	host: '10.18.71.244', // TODO: Set on server startup
+// -----> Create New Peer - Display <-----
+
+const peer = new Peer('display', {
+	host: 'localhost', // TODO: Set on server startup
 	port: 3000,
 	path: '/api/peer'
 });
 
-// Check for members. If any, start stream
-memberAvailable();
+// -----> Start Stream <-----
 
-peer.on('connection', (conn) => {
-	members.push(conn.peer)
-	console.log("member checked in");
-});
+// Init
+opinionAvailable();
 
-function memberAvailable() {
-	if (members.length > 0) {
+// Check for opinions, start stream if any
+function opinionAvailable() {
+	if (opinions.length > 0) {
 		startStream();
 	} else {
-		setTimeout(memberAvailable, 5000);
+		setTimeout(opinionAvailable, 5000);
 	}
 }
 
+// Connect to next opinion, telling it to send a stream
 function startStream() {
 	if (oldCall) {
 		oldCall.close();
 	}
 
-	if (members.length < index + 1) {
+	if (opinions.length < index + 1) {
 		index = 0;
-		member = members[index];
-		console.log("streaming from:", member);
+		opinion = opinions[index];
+		console.log("streaming from:", opinion);
 	} else {
-		member = members[index];
+		opinion = opinions[index];
 		index++;
-		console.log("streaming from:", member);
+		console.log("streaming from:", opinion);
 	}
 
-	peer.connect(member);
-	setTimeout(memberAvailable, 5000);
+	peer.connect(opinion);
+	setTimeout(opinionAvailable, 5000);
 }
 
+// -----> Define Peer Events <-----
+
+// When opinion connects, add it to opinions list
+peer.on('connection', (conn) => {
+	opinions.push(conn.peer)
+	console.log("opinion checked in");
+});
+
+// When receive a stream, display in 
 peer.on('call', (call) => {
 	oldCall = call
 	startChat();
@@ -63,11 +73,12 @@ peer.on('call', (call) => {
 	}
 });
 
-peer.on('error', function (err) {
-	if (err.type == "peer-unavailable" && members.length > 0) {
-		members = members.filter(e => e !== member);
+// If lose connection to an opinion, remove it from opinions list
+peer.on('error', (err) => {
+	if (err.type == "peer-unavailable" && opinions.length > 0) {
+		opinions = opinions.filter(e => e !== opinion);
 		index = 0;
-		console.log("peer unavailable:", member);
+		console.log("peer unavailable:", opinion);
 		console.log("resetting index");
 	}
 });

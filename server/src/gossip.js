@@ -1,31 +1,30 @@
 'use strict'
-// var Swim = require('swim');
 const sneeze = require('../lib/sneeze');
-const config = require('../config/config')
+const config = require('../config/config');
+
+// ----------> Bootstrap Member <----------
 
 // NOTE: This is to be called on server startup, not for api use
 exports.bootstrap = () => {
-	let active
-	let bases = config.cluster.bases
-	let { host, port, mode, name } = config.local
-	mode="monitor"
+	let active;
+	let bases = config.cluster.bases;
+	let { host, port, mode, name } = config.local;
 
-	// TODO: THIS IS NOT DONE - NEED TO MAKE SURE CORRECT SETTINGS
-	// TODO: CHECK ALL STARTUPS - SOME NEED NEW OR CHANGED SETTINGS
+	// TODO: THIS IS NOT DONE - active.newOnUpdate() need to be set for base and member
 	switch (mode) {
 		case 'base':
 			active = newBase(bases, host, port, name);
 			active.newOnUpdate(function () {
-				console.log("")
-				console.log('CHANGE MOTHERFUCKER')
+				console.log("");
+				console.log('CHANGE MOTHERFUCKER');
 			})
 			break;
 
 		case 'member':
 			active = newMember(bases, host, port, name);
 			active.newOnUpdate(function () {
-				console.log("")
-				console.log('CHANGE MOTHERFUCKER')
+				console.log("");
+				console.log('CHANGE MOTHERFUCKER');
 			})
 			break;
 
@@ -40,12 +39,11 @@ exports.bootstrap = () => {
 	return active;
 }
 
-// -----> Start Bootstrap Helper Functions <-----
+// -----> Bootstrap Helper Functions <-----
 
-// identifier: null
+// { identifier: null }
 // You can provide a unique identifier for your instance.
 // This is generated automatically if you do not provide one.
-
 const newBase = (bases, host, port, name) => {
 	let opts = {
 		isbase: true,
@@ -57,13 +55,10 @@ const newBase = (bases, host, port, name) => {
 
 	let base = sneeze(opts);
 
-	// display.on('add', console.log)
+	// base.on('add', console.log);
+	// base.on('remove', console.log);
 
-	// display.on('remove', console.log)
-
-	base.join({
-		name: name
-	});
+	base.join({ name: name });
 
 	return base;
 }
@@ -76,15 +71,12 @@ const newMember = (bases, host, port, name) => {
 		port: port
 	};
 
-	let member = sneeze(opts)
+	let member = sneeze(opts);
 
-	// member.on('add', console.log)
+	// member.on('add', console.log);
+	// member.on('remove', console.log);
 
-	// member.on('remove', console.log)
-
-	member.join({
-		name: name
-	})
+	member.join({ name: name });
 
 	return member;
 }
@@ -101,20 +93,17 @@ const newMonitor = (bases, host, port, name) => {
 		}
 	};
 
-	let monitor = sneeze(opts)
+	let monitor = sneeze(opts);
 
-	// monitor.on('add', console.log)
+	// monitor.on('add', console.log);
+	// monitor.on('remove', console.log);
 
-	// monitor.on('remove', console.log)
-
-	monitor.join({
-		name: name
-	})
+	monitor.join({ name: name });
 
 	return monitor;
 }
 
-// -----> End Bootstrap Helper Functions <-----
+// -----> Print Initial Score <-----
 
 // NOTE: This is to be called on server startup, not for api use
 exports.initialScore = function (member) {
@@ -123,15 +112,24 @@ exports.initialScore = function (member) {
 	console.log(member.getLocalScore().meta.score);
 }
 
+
+// -----> Return Local Metadata <-----
+
 exports.getLocalMeta = (member) => {
 	let localMeta = member.getLocalScore();
 	console.log(localMeta);
 }
 
+// -----> Return Members In Network <-----
+
 exports.getMembers = (member) => {
 	let members = member.members();
 	console.log(members);
 }
+
+
+// TODO: Figure out how gossip.updateScore() is gonna work
+// -----> ... <-----
 
 exports.updateScore = function (member, req, res) {
 	let newScores = {
@@ -154,10 +152,5 @@ exports.updateScore = function (member, req, res) {
 	};
 }	
 
-// exports.joinCluster = (sneeze) => {
-
-// }
-
-// exports.leaveCluster = (sneeze) => {
-
-// }
+// exports.joinCluster = (sneeze) => {}
+// exports.leaveCluster = (sneeze) => {}

@@ -6,12 +6,15 @@ const helmet = require('helmet');
 const peer = require('peer');
 const https = require('https');
 const fs = require('fs');
-const config = require('./config/config')
-const routes = require('./src/routes');
+const config = require('./config/config');
+const apiRoutes = require('./src/routes');
+
+const mode = config.local.mode;
 
 // ----------> Create HTTPS Server <----------
 
 const app = express();
+
 const key = fs.readFileSync(__dirname + '/../certs/selfsigned.key');
 const cert = fs.readFileSync(__dirname + '/../certs/selfsigned.crt');
 
@@ -22,9 +25,15 @@ const options = {
 
 const server = https.createServer(options, app);
 
+// ----------> Set Middleware <----------
+
+app.use(logger('common'));
+app.use(helmet());
+app.use(bodyParser.json());
+
 // ----------> Set Route for PeerJS API <----------
 
-if (config.local.mode == 'base') {
+if (mode == 'base') {
 	const peerOptions = {
 		debug: false
 	};
@@ -34,24 +43,24 @@ if (config.local.mode == 'base') {
 	app.use('/api/peer', peerServer);
 }
 
-// ----------> Set Middleware <----------
-
-app.use(logger('common'));
-app.use(helmet());
-app.use(routes);
-app.use(bodyParser.json());
-
 // ----------> Set Static Routes <----------
 
 app.use(express.static('public/root'));
 
-// TODO: Can the following 2 be inside the public dir or is that just a nightmare? if yes, then above should have own dir inside public as well
-app.use('/display', (req, res, next) => {
-	express.static('public/display')(req, res, next);
-});
+if (mode == 'base') {
+	app.use('/display', (req, res, next) => {
+		express.static('public/display')(req, res, next);
+	});
+// }
 
-app.use('/opinion', (req, res, next) => {
-	express.static('public/opinion')(req, res, next);
-});
+// if (mode == 'member') {
+	app.use('/opinion', (req, res, next) => {
+		express.static('public/opinion')(req, res, next);
+	});
+}
+
+// ----------> Set API Routes <----------
+
+app.use(apiRoutes);
 
 module.exports = server;
