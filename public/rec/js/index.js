@@ -1,28 +1,26 @@
 // NOTE: BASE
 
-// TODO: What to do if lose a member - remove from array!
-
 let members = [];
 let member;
 let index = 0;
 let oldCall;
 
 const peer = new Peer('base', {
-	host: '10.18.71.244',
+	host: '10.18.71.244', // TODO: Set on server startup
 	port: 3000,
-	path: '/peer'
+	path: '/api/peer'
 });
 
-// Check for members. If any, start stream cycle
+// Check for members. If any, start stream
 memberAvailable();
 
 peer.on('connection', (conn) => {
 	members.push(conn.peer)
+	console.log("member checked in");
 });
 
 function memberAvailable() {
 	if (members.length > 0) {
-		console.log("member checked in");
 		startStream();
 	} else {
 		setTimeout(memberAvailable, 5000);
@@ -37,16 +35,15 @@ function startStream() {
 	if (members.length < index + 1) {
 		index = 0;
 		member = members[index];
-		console.log("streaming from:", member)
+		console.log("streaming from:", member);
 	} else {
 		member = members[index];
-		console.log("streaming from:", member)
 		index++;
+		console.log("streaming from:", member);
 	}
 
 	peer.connect(member);
 	setTimeout(memberAvailable, 5000);
-	// setTimeout(startStream, 5000);
 }
 
 peer.on('call', (call) => {

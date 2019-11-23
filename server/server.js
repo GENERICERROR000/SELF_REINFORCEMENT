@@ -6,7 +6,7 @@ const helmet = require('helmet');
 const peer = require('peer');
 const https = require('https');
 const fs = require('fs');
-const config = require('./config/config');
+const routes = require('./src/routes');
 
 // ----------> Create HTTPS Server <----------
 
@@ -29,26 +29,26 @@ const peerOptions = {
 
 const peerserver = peer.ExpressPeerServer(server, peerOptions);
 
-app.use('/peer', peerserver);
+app.use('/api/peer', peerserver);
 
 // ----------> Set Middleware <----------
 
 app.use(logger('common'));
 app.use(helmet());
-app.use(require('./routes'));
+app.use(routes);
 app.use(bodyParser.json());
 
 // ----------> Set Static Routes <----------
 
-app.use(express.static('public'));
+app.use(express.static('public/root'));
 
+// TODO: Can the following 2 be inside the public dir or is that just a nightmare? if yes, then above should have own dir inside public as well
 app.use('/base', (req, res, next) => {
-	express.static('rec')(req, res, next);
+	express.static('public/base')(req, res, next);
 });
 
 app.use('/member', (req, res, next) => {
-	express.static('sen')(req, res, next);
+	express.static('public/member')(req, res, next);
 });
-
 
 module.exports = server;

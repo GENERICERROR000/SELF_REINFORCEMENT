@@ -1,16 +1,31 @@
 // NOTE: MEMBER
 
-const peer = new Peer({
-	host: '10.18.71.244',
-	port: 3000,
-	path: '/peer'
-});
-
 let net;
 let video;
 let segmentation;
 let img;
-let carl = 0;
+let carl = 0; // WARN: Remove when dev is dooone
+
+const peer = new Peer({
+	host: '10.18.71.244', // TODO: Set on server startup
+	port: 3000,
+	path: '/api/peer'
+});
+
+// -----> Stream Camera <-----
+
+peer.on('connection', (conn) => {
+	startChat();
+});
+
+async function startChat() {
+	const call = peer.call('base', video.elt.srcObject);
+	console.log("stream start");
+
+	call.on('close', () => {
+		console.log("stream end");
+	});
+}
 
 // -----> ML Segmentation <-----
 
@@ -57,17 +72,16 @@ async function gotResults(err, result) {
 	gotResults(false, newSegmentation);
 }
 
-// -----> Stream Camera <-----
+// TODO: MAKE THIS FN YO!
+// async function sendScore(score) {
+// 	let fetchOptions = {
+// 		method: 'POST',
+// 		body: body: JSON.stringify(data) // body data type must match "Content-Type" header,
+	//  headers: {
+	 	// 'Content-Type': 'application/json'
+	//  }
+// 	};
 
-peer.on('connection', (conn) => {
-	startChat();
-});
-
-async function startChat() {
-	const call = peer.call('base', video.elt.srcObject);
-	console.log("stream start");
-
-	call.on('close', () => {
-		console.log("stream end");
-	});
-}
+// 	let res = await fetch('baseURL', fetchOptions);
+// 	console.log(res.status);
+// }
