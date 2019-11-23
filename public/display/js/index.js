@@ -1,4 +1,4 @@
-// NOTE: BASE
+// NOTE: DISPLAY
 
 let members = [];
 let member;

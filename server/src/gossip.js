@@ -10,21 +10,19 @@ exports.bootstrap = () => {
 	let { host, port, mode, name } = config.local
 	mode="monitor"
 
+	// TODO: THIS IS NOT DONE - NEED TO MAKE SURE CORRECT SETTINGS
+	// TODO: CHECK ALL STARTUPS - SOME NEED NEW OR CHANGED SETTINGS
 	switch (mode) {
 		case 'base':
 			active = newBase(bases, host, port, name);
-			break;
-
-		case 'member':
-			active = newMember(bases, host, port, name);
 			active.newOnUpdate(function () {
 				console.log("")
 				console.log('CHANGE MOTHERFUCKER')
 			})
 			break;
 
-		case 'display':
-			active = newDisplay(bases, host, port, name);
+		case 'member':
+			active = newMember(bases, host, port, name);
 			active.newOnUpdate(function () {
 				console.log("")
 				console.log('CHANGE MOTHERFUCKER')
@@ -36,7 +34,7 @@ exports.bootstrap = () => {
 			break;
 
 		default:
-			active = newBase(bases, host, port, name);
+			active = newMember(bases, host, port, name);
 	}
 
 	return active;
@@ -45,7 +43,8 @@ exports.bootstrap = () => {
 // -----> Start Bootstrap Helper Functions <-----
 
 // identifier: null
-// You can provide a unique identifier for your instance.This is generated automatically if you do not provide one.
+// You can provide a unique identifier for your instance.
+// This is generated automatically if you do not provide one.
 
 const newBase = (bases, host, port, name) => {
 	let opts = {
@@ -57,6 +56,10 @@ const newBase = (bases, host, port, name) => {
 	};
 
 	let base = sneeze(opts);
+
+	// display.on('add', console.log)
+
+	// display.on('remove', console.log)
 
 	base.join({
 		name: name
@@ -84,28 +87,6 @@ const newMember = (bases, host, port, name) => {
 	})
 
 	return member;
-}
-
-// TODO: Lots to do here...
-const newDisplay = (bases, host, port, name) => {
-	let opts = {
-		silent: true,
-		bases: bases,
-		host: host,
-		port: port
-	};
-
-	let display = sneeze(opts)
-
-	display.on('add', console.log)
-
-	display.on('remove', console.log)
-
-	display.join({
-		name: name
-	})
-
-	return display;
 }
 
 const newMonitor = (bases, host, port, name) => {

@@ -1,4 +1,4 @@
-// NOTE: MEMBER
+// NOTE: OPINION
 
 let net;
 let video;

@@ -15,4 +15,3 @@ router.post('/api/score', function (req, res) {
 	gossip.updateScore(member, req, res)
 });
 
-module.exports = router;
