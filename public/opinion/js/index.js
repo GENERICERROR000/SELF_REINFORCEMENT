@@ -3,7 +3,6 @@
 let localStream;
 let net;
 let img;
-let segmentation;
 let videoElement;
 let carl = 0; // WARN: Remove when dev is done
 
@@ -61,22 +60,18 @@ async function startNet() {
 	peer.connect('display');
 }
 
-async function sendOpinion(err, result) {
+// TODO: This name is wrong becuase Fn also calls for score - rethink sequence here
+async function sendOpinion(err, segmentation) {
 	if (err) {
 		console.log(err);
 		return;
 	}
-
-	segmentation = result;
 
 	if (carl == 0) {
 		// segmentation score
 		// console.log(segmentation.allPoses[0].keypoints[0].score);
 		console.log(segmentation);
 
-		// Video Stream object
-		// console.log(video.elt.srcObject);
-		
 		carl = 1;
 	}
 

@@ -1,6 +1,7 @@
-.vagrant/
-certs/
+
+certs
 TODO
+.vagrant
 
 # Logs
 logs
