@@ -7,6 +7,7 @@ module.exports = {
 		name: process.env.NAME || 'node-' + new Date()
 	},
 	cluster: {
-		bases: (process.env.BASES || '127.0.0.1:3000').split(',')
+		bases: (process.env.BASES || '127.0.0.1:3000').split(','),
+		peerServer: process.env.PEER_SERVER || '127.0.0.1:3000'
 	}
 };

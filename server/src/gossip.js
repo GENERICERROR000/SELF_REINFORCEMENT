@@ -1,6 +1,6 @@
 'use strict'
-const sneeze = require('../lib/sneeze');
 const config = require('../config/config');
+const sneeze = require('../lib/sneeze');
 
 // ----------> Bootstrap Member <----------
 

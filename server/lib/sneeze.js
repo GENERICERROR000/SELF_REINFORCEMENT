@@ -307,7 +307,7 @@ function Sneeze(options) {
 			return swim.members(true).shift()
 		}
 
-// -----> Start Return Score Method <-----
+// -----> End Return Score Method <-----
 
 // -----> Start Update Score Method <-----
 

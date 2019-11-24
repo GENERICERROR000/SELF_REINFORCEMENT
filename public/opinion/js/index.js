@@ -18,7 +18,7 @@ const peer = new Peer({
 });
 
 // -----> ML Segmentation <-----
-
+console.log(BASE_URL)
 bootstrap();
 
 async function bootstrap() {

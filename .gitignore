@@ -1,7 +1,8 @@
-
-certs
+# Custom
 TODO
 .vagrant
+certs
+*env.js
 
 # Logs
 logs

@@ -1,15 +1,30 @@
 'use strict'
-const express = require('express');
 const bodyParser = require('body-parser');
-const logger = require('morgan');
+const express = require('express');
 const helmet = require('helmet');
-const peer = require('peer');
 const https = require('https');
 const fs = require('fs');
+const logger = require('morgan');
+const peer = require('peer');
 const config = require('./config/config');
 const apiRoutes = require('./src/routes');
 
 const mode = config.local.mode;
+
+// ----------> Create Config File For Clients <----------
+
+const toWrite = `
+	const BASE_URL = '${config.local.host}';
+	const PEER_SERVER = '${config.cluster.peerServer}';
+`
+
+if (mode == 'base') {
+	fs.writeFileSync(__dirname + '/../public/display/js/env.js', toWrite)
+// }
+// WARN: This is temporary for dev
+// if (mode == 'member') {
+	fs.writeFileSync(__dirname + '/../public/opinion/js/env.js', toWrite)
+}
 
 // ----------> Create HTTPS Server <----------
 
@@ -52,7 +67,7 @@ if (mode == 'base') {
 		express.static('public/display')(req, res, next);
 	});
 // }
-
+// WARN: This is temporary for dev
 // if (mode == 'member') {
 	app.use('/opinion', (req, res, next) => {
 		express.static('public/opinion')(req, res, next);
