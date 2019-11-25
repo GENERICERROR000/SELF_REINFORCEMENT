@@ -15,7 +15,9 @@ const mode = config.local.mode;
 
 const toWrite = `
 	const BASE_URL = '${config.local.host}';
+	const BASE_PORT = '${config.local.port}';
 	const PEER_SERVER = '${config.cluster.peerServer}';
+	const PEER_PORT = '${config.cluster.peerPort}';
 `
 
 if (mode == 'base') {
