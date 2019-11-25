@@ -1,5 +1,6 @@
 'use strict'
 const config = require('../config/config');
+const gossip = require('./gossip');
 
 // TODO: Need to create the following
 // 			1) When receive new opinion data from client, calc opinion score
@@ -46,9 +47,7 @@ const segmentationParts = [
 	"rightAnkle"
 ]
 
-// exports.newOpinionFromClient = () => {
-// 	calculateLocalOpinion(localOpinion, memberOpinions);
-// }
+// ----------> Generate Opinions <----------
 
 exports.generate = () => {
 	const choices = generateChoices();
@@ -83,6 +82,39 @@ function hateOrLove(choices) {
 	return preferences;
 }
 
+exports.newFromClient = (member, newClientOpinions, localPreferences) => {
+	const clientOpinion = calculateLocalOpinion(newClientOpinions, localPreferences);
+	// TODO: gossip.GetmemOpins somehow
+	const localOpinion = calculateLocalOpinion(clientOpinion, memberOpinions);
+	// TODO: gossip. somehow
+	gossip.updateScore(member, localOpinion)
+}
+
+// ----------> Calculate Opinion Sent From Client <----------
+
+// TODO: NOTE: This should be async - use Promise...
+function calculateClientOpinion(newClientOpinions, localPreferences) {
+	let sumScores;
+	let part;
+
+	for (let i = 0; i < newClientOpinions.length; i++) {
+		part = newClientOpinions[i].part;
+		
+		if (localPreferences.hate.includes(part)) {
+			sumScores += (1 - newClientOpinions[i].score);
+		}
+
+		if (localPreferences.love.includes(part)) {
+			sumScores += newClientOpinions[i].score;
+		}
+	}
+
+	const finalScore = sumScores / localPreferences.length;
+
+	return finalScore;
+}
+
+// ----------> Calculate Local Opinion <----------
 
 // NOTE: meta.opinion object:
 // {
@@ -91,10 +123,8 @@ function hateOrLove(choices) {
 // 	score: 68.00
 // }
 
-// TODO: WARN: exports.calculateLocalOpinion is not named right. just generates opinion once new local opinion is created by client. need Fn that uses that new client to calculate local score!!!
-
-function calculateLocalOpinion (localOpinion, memberOpinions) {
-	const localScore = localOpinion * selfWeight;
+function calculateLocalOpinion (clientOpinion, memberOpinions) {
+	const localScore = clientOpinion * selfWeight;
 	const groupScore = calculateGroupOpinion(memberOpinions) * groupWeight;
 	const finalScore = ((localScore + groupScore) * 100)
 	
@@ -134,93 +164,3 @@ function applyGroupWeights(memberOpinion) {
 
 	return weightedScore;
 }
-
-// {
-// 	score: 0.2701843608143356,
-// 	keypoints: [{
-// 			score: 0.9919676184654236,
-// 			part: 'nose',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.9969831109046936,
-// 			part: 'leftEye',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.9946723580360413,
-// 			part: 'rightEye',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.32409271597862244,
-// 			part: 'leftEar',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.9814074039459229,
-// 			part: 'rightEar',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.06493322551250458,
-// 			part: 'leftShoulder',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.07114896923303604,
-// 			part: 'rightShoulder',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.018046526238322258,
-// 			part: 'leftElbow',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.004184186924248934,
-// 			part: 'rightElbow',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.01926998421549797,
-// 			part: 'leftWrist',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.004699308890849352,
-// 			part: 'rightWrist',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.05739530175924301,
-// 			part: 'leftHip',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.010856086388230324,
-// 			part: 'rightHip',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.007066067308187485,
-// 			part: 'leftKnee',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.04118501767516136,
-// 			part: 'rightKnee',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.0022347038611769676,
-// 			part: 'leftAnkle',
-// 			position: [Object]
-// 		},
-// 		{
-// 			score: 0.0029915485065430403,
-// 			part: 'rightAnkle',
-// 			position: [Object]
-// 		}
-// 	]
-// }

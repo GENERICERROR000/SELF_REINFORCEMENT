@@ -143,12 +143,12 @@ function Sneeze(options) {
 
 // ----- > Start Score Meta Data <-----
 				
-				meta.score = false || {
-					id: "default",
-					love: "default",
-					hate: "default",
-					noOpinion: "default"
-				} // TODO: figure this object out
+				meta.opinions = {
+					score: null,
+					segmentationOpinions: options._meta.initialPrefs,
+					name: options._meta.name,
+					id: options._meta.id
+				}
 
 // ----- > End Score Meta Data <-----
 
@@ -312,6 +312,8 @@ function Sneeze(options) {
 // -----> Start Update Score Method <-----
 
 		self.updateLocalScore = function (name, scoreData) {
+			// TODO: This needs to change. maybe just change score?
+
 			let newMeta
 			let memberData = swim.members(true)
 

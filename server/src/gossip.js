@@ -5,15 +5,15 @@ const sneeze = require('../lib/sneeze');
 // ----------> Bootstrap Member <----------
 
 // NOTE: This is to be called on server startup, not for api use
-exports.bootstrap = () => {
+exports.bootstrap = (segmentationOpinions) => {
 	let active;
 	let bases = config.cluster.bases;
-	let { host, port, mode, name } = config.local;
+	let local = config.local;
 
 	// TODO: THIS IS NOT DONE - active.newOnUpdate() need to be set for base and member
 	switch (mode) {
 		case 'base':
-			active = newBase(bases, host, port, name);
+			active = newBase(local);
 			active.newOnUpdate(function () {
 				console.log("");
 				console.log('CHANGE MOTHERFUCKER');
@@ -21,7 +21,7 @@ exports.bootstrap = () => {
 			break;
 
 		case 'member':
-			active = newMember(bases, host, port, name);
+			active = newMember(local, segmentationOpinions);
 			active.newOnUpdate(function () {
 				console.log("");
 				console.log('CHANGE MOTHERFUCKER');
@@ -29,11 +29,11 @@ exports.bootstrap = () => {
 			break;
 
 		case 'monitor':
-			active = newMonitor(bases, host, port, name);
+			active = newMonitor(local);
 			break;
 
 		default:
-			active = newMember(bases, host, port, name);
+			active = newMember(local, segmentationOpinions);
 	}
 
 	return active;
@@ -44,7 +44,8 @@ exports.bootstrap = () => {
 // { identifier: null }
 // You can provide a unique identifier for your instance.
 // This is generated automatically if you do not provide one.
-const newBase = (bases, host, port, name) => {
+const newBase = (local) => {
+	const { bases, host, port, name } = local;
 	let opts = {
 		isbase: true,
 		silent: true,
@@ -63,12 +64,18 @@ const newBase = (bases, host, port, name) => {
 	return base;
 }
 
-const newMember = (bases, host, port, name) => {
+const newMember = (local, segmentationOpinions) => {
+	const { bases, host, port, name, id } = local;
 	let opts = {
 		silent: true,
 		bases: bases,
 		host: host,
-		port: port
+		port: port,
+		_meta: {
+			id: id,
+			name: name,
+			initialPrefs: segmentationOpinions
+		}
 	};
 
 	let member = sneeze(opts);
@@ -81,7 +88,8 @@ const newMember = (bases, host, port, name) => {
 	return member;
 }
 
-const newMonitor = (bases, host, port, name) => {
+const newMonitor = (local) => {
+	const { bases, host, port, name } = local;
 	let opts = {
 		silent: true,
 		bases: bases,
@@ -127,29 +135,17 @@ exports.getMembers = (member) => {
 	console.log(members);
 }
 
+// -----> Update Local Score - Update Meta <-----
 
-// TODO: Figure out how gossip.updateScore() is gonna work
-// -----> ... <-----
+exports.updateScore = function (member, newScore) {
+	// TODO: WARN: set this!
+	let newScore = 85;
 
-exports.updateScore = function (member, req, res) {
-	let newScores = {
-		id: "catdog",
-		love: "carl",
-		hate: "carla",
-		noOpinion: "haha"
-	}; // TODO: Figure out real object
-
-	let newMeta = member.updateLocalScore(config.local.name, newScores);
+	let newMeta = member.updateLocalScore(newScore);
 	
 	console.log("");
 	console.log("-----NEW SCORE-----");
 	console.log(newMeta.score);
-
-	if (!newMeta) {
-		console.error("ERROR:", err);
-	} else {
-		res.end('<h1>THAT WORKED</h1><h3>' + new Date() + '</h3>');
-	};
 }	
 
 // exports.joinCluster = (sneeze) => {}
