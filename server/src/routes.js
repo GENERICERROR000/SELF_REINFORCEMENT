@@ -22,22 +22,27 @@ gossip.initialScore(member);
 
 // ----------> Define API Routes <----------
 
+if (mode == 'base') {
+	// TODO: DO THIS
+
+	router.get('/api/love_hate_noop', function (req, res) {
+
+		res.end();
+	});
+}
+
 if (mode == 'member') {
 	// TODO: SERVER CODE MAY NEED TO USE PROMISES FOR SOME OF THE WORK.
-	// 		 OTHERWISE MAY SLOW DOWN EXECUTION FOR
-	// 		 SERVER ITSELF.RESULTS OF NEW OPINIONS SHOULD DEF BE ASYNC...
+	// WARN: OTHERWISE MAY SLOW DOWN EXECUTION FOR SERVER
+	// 		 ITSELF - RESULTS OF NEW OPINIONS SHOULD DEF BE ASYNC...
 
 	// New ML Segmentation Data
 	router.post('/api/opinion', function (req, res) {
 		const newClientOpinions = req.body.keypoints;
 
-		// TODO: newFromClient() requires member ogj - maybe needs gossip obj???
 		opinions.newFromClient(member, newClientOpinions, segmentationOpinions)
 
-		// TODO: I assume below needs newScore passed?
-		// gossip.updateScore(member, req, res)
-
-		console.log(newClientOpinions)
+		// console.log(newClientOpinions)
 		res.end();
 	});
 
@@ -46,10 +51,8 @@ if (mode == 'member') {
 		// TODO: Something like:
 		// segmentationOpinions = opinions.generate();
 
-		console.log(req.body)
 		res.end();
 	});
-	
 }
 
 module.exports = router;

@@ -22,9 +22,9 @@ const toWrite = `
 
 if (mode == 'base') {
 	fs.writeFileSync(__dirname + '/../public/display/js/env.js', toWrite)
-// }
-// WARN: This is temporary for dev
-// if (mode == 'member') {
+}
+
+if (mode == 'member') {
 	fs.writeFileSync(__dirname + '/../public/opinion/js/env.js', toWrite)
 }
 
@@ -68,9 +68,9 @@ if (mode == 'base') {
 	app.use('/display', (req, res, next) => {
 		express.static('public/display')(req, res, next);
 	});
-// }
-// WARN: This is temporary for dev
-// if (mode == 'member') {
+}
+
+if (mode == 'member') {
 	app.use('/opinion', (req, res, next) => {
 		express.static('public/opinion')(req, res, next);
 	});

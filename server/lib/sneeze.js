@@ -144,10 +144,13 @@ function Sneeze(options) {
 // ----- > Start Score Meta Data <-----
 				
 				meta.opinions = {
-					score: null,
+					// TODO:WARN: INITIAL OPINION IS BIAS - NEED TO FIGURE OUT
+					score: 50,
+					// score: null,
 					segmentationOpinions: options._meta.initialPrefs,
 					name: options._meta.name,
-					id: options._meta.id
+					id: options._meta.id,
+					mode: options._meta.mode
 				}
 
 // ----- > End Score Meta Data <-----
@@ -268,13 +271,13 @@ function Sneeze(options) {
 					if (m.meta.identifier$ === meta.identifier$) {
 						return
 					}
-// ----- > Start Score Meta Check <-----
+// ----- > Start Opinions Meta Check <-----
 
-					if (m.meta.score === meta.score) {
+					if (m.meta.opinions === meta.opinions) {
 						return
 					}
 
-// ----- > End Score Meta Check <-----
+// ----- > End Opinions Meta Check <-----
 
 					if (0 === m.state) {
 						addNode(m)
@@ -303,7 +306,7 @@ function Sneeze(options) {
 
 // -----> Start Return Score Method <-----
 
-		self.getLocalScore = function (name, scoreData) {
+		self.getLocalScore = function () {
 			return swim.members(true).shift()
 		}
 
@@ -311,18 +314,10 @@ function Sneeze(options) {
 
 // -----> Start Update Score Method <-----
 
-		self.updateLocalScore = function (name, scoreData) {
-			// TODO: This needs to change. maybe just change score?
+		self.updateLocalScore = function (newScore) {
+			const newMeta = self.getLocalScore().meta
 
-			let newMeta
-			let memberData = swim.members(true)
-
-			for (let i = 0; i < memberData.length; i++) {
-				if (memberData[i].meta.name == name) {
-					newMeta = {...memberData[i].meta}
-					newMeta.score = scoreData
-				}
-			}
+			newMeta.opinions.score = newScore
 
 			swim.updateMeta(newMeta)
 

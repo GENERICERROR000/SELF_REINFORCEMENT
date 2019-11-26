@@ -2,18 +2,18 @@
 const config = require('../config/config');
 const sneeze = require('../lib/sneeze');
 
+const local = config.local;
+
 // ----------> Bootstrap Member <----------
 
 // NOTE: This is to be called on server startup, not for api use
 exports.bootstrap = (segmentationOpinions) => {
 	let active;
-	let bases = config.cluster.bases;
-	let local = config.local;
 
 	// TODO: THIS IS NOT DONE - active.newOnUpdate() need to be set for base and member
-	switch (mode) {
+	switch (local.mode) {
 		case 'base':
-			active = newBase(local);
+			active = newBase();
 			active.newOnUpdate(function () {
 				console.log("");
 				console.log('CHANGE MOTHERFUCKER');
@@ -21,7 +21,7 @@ exports.bootstrap = (segmentationOpinions) => {
 			break;
 
 		case 'member':
-			active = newMember(local, segmentationOpinions);
+			active = newMember(segmentationOpinions);
 			active.newOnUpdate(function () {
 				console.log("");
 				console.log('CHANGE MOTHERFUCKER');
@@ -29,11 +29,11 @@ exports.bootstrap = (segmentationOpinions) => {
 			break;
 
 		case 'monitor':
-			active = newMonitor(local);
+			active = newMonitor();
 			break;
 
 		default:
-			active = newMember(local, segmentationOpinions);
+			active = newMember(segmentationOpinions);
 	}
 
 	return active;
@@ -44,14 +44,17 @@ exports.bootstrap = (segmentationOpinions) => {
 // { identifier: null }
 // You can provide a unique identifier for your instance.
 // This is generated automatically if you do not provide one.
-const newBase = (local) => {
-	const { bases, host, port, name } = local;
+const newBase = () => {
+	const { bases, host, port, name, mode } = local;
 	let opts = {
 		isbase: true,
 		silent: true,
 		bases: bases,
 		host: host,
-		port: port
+		port: port,
+		_meta: {
+			mode: mode
+		}
 	};
 
 	let base = sneeze(opts);
@@ -64,8 +67,8 @@ const newBase = (local) => {
 	return base;
 }
 
-const newMember = (local, segmentationOpinions) => {
-	const { bases, host, port, name, id } = local;
+const newMember = (segmentationOpinions) => {
+	const { bases, host, port, name, id, mode } = local;
 	let opts = {
 		silent: true,
 		bases: bases,
@@ -74,7 +77,8 @@ const newMember = (local, segmentationOpinions) => {
 		_meta: {
 			id: id,
 			name: name,
-			initialPrefs: segmentationOpinions
+			initialPrefs: segmentationOpinions,
+			mode: mode
 		}
 	};
 
@@ -88,8 +92,8 @@ const newMember = (local, segmentationOpinions) => {
 	return member;
 }
 
-const newMonitor = (local) => {
-	const { bases, host, port, name } = local;
+const newMonitor = () => {
+	const { bases, host, port, name, mode } = local;
 	let opts = {
 		silent: true,
 		bases: bases,
@@ -97,7 +101,10 @@ const newMonitor = (local) => {
 		port: port,
 		monitor: {
 			active: true,
-			meta: ['name', 'score']
+			meta: ['opinions']
+		},
+		_meta: {
+			mode: mode
 		}
 	};
 
@@ -116,36 +123,35 @@ const newMonitor = (local) => {
 // NOTE: This is to be called on server startup, not for api use
 exports.initialScore = function (member) {
 	console.log("");
-	console.log("-----INITIAL SCORE-----");
-	console.log(member.getLocalScore().meta.score);
+	console.log("-----INITIAL OPINIONS-----");
+	console.log(member.getLocalScore().meta.opinions);
+	console.log("");
 }
 
 
 // -----> Return Local Metadata <-----
 
 exports.getLocalMeta = (member) => {
-	let localMeta = member.getLocalScore();
+	const localMeta = member.getLocalScore();
 	console.log(localMeta);
 }
 
 // -----> Return Members In Network <-----
 
 exports.getMembers = (member) => {
-	let members = member.members();
-	console.log(members);
+	const members = member.members();
+	return members;
 }
 
 // -----> Update Local Score - Update Meta <-----
 
 exports.updateScore = function (member, newScore) {
-	// TODO: WARN: set this!
-	let newScore = 85;
-
-	let newMeta = member.updateLocalScore(newScore);
+	const newMeta = member.updateLocalScore(newScore);
 	
 	console.log("");
-	console.log("-----NEW SCORE-----");
-	console.log(newMeta.score);
+	console.log("-----NEW OPINIONS-----");
+	console.log(newMeta);
+	console.log("");
 }	
 
 // exports.joinCluster = (sneeze) => {}
