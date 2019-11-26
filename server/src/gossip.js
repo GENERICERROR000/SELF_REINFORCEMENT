@@ -7,7 +7,7 @@ const local = config.local;
 // ----------> Bootstrap Member <----------
 
 // NOTE: This is to be called on server startup, not for api use
-exports.bootstrap = (segmentationOpinions) => {
+exports.bootstrap = (initData) => {
 	let active;
 
 	// TODO: THIS IS NOT DONE - active.newOnUpdate() need to be set for base and member
@@ -21,7 +21,7 @@ exports.bootstrap = (segmentationOpinions) => {
 			break;
 
 		case 'member':
-			active = newMember(segmentationOpinions);
+			active = newMember(initData);
 			active.newOnUpdate(function () {
 				console.log("");
 				console.log('CHANGE MOTHERFUCKER');
@@ -33,7 +33,7 @@ exports.bootstrap = (segmentationOpinions) => {
 			break;
 
 		default:
-			active = newMember(segmentationOpinions);
+			active = newMember(initData);
 	}
 
 	return active;
@@ -67,7 +67,8 @@ const newBase = () => {
 	return base;
 }
 
-const newMember = (segmentationOpinions) => {
+const newMember = (initData) => {
+	const { segmentationOpinions, selfOrGroup } = initData;
 	const { bases, host, port, name, id, mode } = local;
 	let opts = {
 		silent: true,
@@ -77,8 +78,9 @@ const newMember = (segmentationOpinions) => {
 		_meta: {
 			id: id,
 			name: name,
-			initialPrefs: segmentationOpinions,
-			mode: mode
+			partPrefs: segmentationOpinions,
+			mode: mode,
+			trustSelfGroup: selfOrGroup
 		}
 	};
 
@@ -101,7 +103,7 @@ const newMonitor = () => {
 		port: port,
 		monitor: {
 			active: true,
-			meta: ['opinions']
+			meta: ['name','opinions']
 		},
 		_meta: {
 			mode: mode
@@ -122,15 +124,15 @@ const newMonitor = () => {
 
 // NOTE: This is to be called on server startup, not for api use
 exports.initialScore = function (member) {
-	console.log("");
-	console.log("-----INITIAL OPINIONS-----");
-	console.log(member.getLocalScore().meta.opinions);
-	console.log("");
+	// console.log("");
+	// console.log("-----INITIAL OPINIONS-----");
+	// console.log(member.getLocalScore().meta.opinions);
+	// console.log("");
 }
 
 
 // -----> Return Local Metadata <-----
-
+// TODO: WILL I EVER USE THIS
 exports.getLocalMeta = (member) => {
 	const localMeta = member.getLocalScore();
 	console.log(localMeta);
@@ -146,7 +148,7 @@ exports.getMembers = (member) => {
 // -----> Update Local Score - Update Meta <-----
 
 exports.updateScore = function (member, newScore) {
-	const newMeta = member.updateLocalScore(newScore);
+	const newMeta = member.updateLocalScore(newScore, local.name);
 	
 	console.log("");
 	console.log("-----NEW OPINIONS-----");

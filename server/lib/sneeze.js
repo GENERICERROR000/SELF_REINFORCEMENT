@@ -142,15 +142,14 @@ function Sneeze(options) {
 				})
 
 // ----- > Start Score Meta Data <-----
-				
+
 				meta.opinions = {
-					// TODO:WARN: INITIAL OPINION IS BIAS - NEED TO FIGURE OUT
-					score: 50,
-					// score: null,
-					segmentationOpinions: options._meta.initialPrefs,
+					score: Math.floor(Math.random() * 101),
+					segmentationOpinions: options._meta.partPrefs,
 					name: options._meta.name,
 					id: options._meta.id,
-					mode: options._meta.mode
+					mode: options._meta.mode,
+					trustSelfGroup: options._meta.trustSelfGroup
 				}
 
 // ----- > End Score Meta Data <-----
@@ -306,18 +305,21 @@ function Sneeze(options) {
 
 // -----> Start Return Score Method <-----
 
-		self.getLocalScore = function () {
-			return swim.members(true).shift()
+		self.getLocalScore = function (name) {
+			var members = swim.members(true)
+			var localMember = members.find(member => member.meta.name == name)
+			
+			return localMember;
 		}
 
 // -----> End Return Score Method <-----
 
 // -----> Start Update Score Method <-----
 
-		self.updateLocalScore = function (newScore) {
-			const newMeta = self.getLocalScore().meta
+		self.updateLocalScore = function (newScore, name) {
+			var newMeta = self.getLocalScore(name).meta
 
-			newMeta.opinions.score = newScore
+			newMeta.opinions.score = Math.floor(newScore)
 
 			swim.updateMeta(newMeta)
 

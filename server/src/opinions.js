@@ -2,24 +2,6 @@
 const config = require('../config/config');
 const gossip = require('./gossip');
 
-// TODO: Need to create the following
-// 			1) When receive new opinion data from client, calc opinion score
-// 			   [Score uses new opinion and weights of member opinion]
-//				1.5) This then should call fn to update local meta  
-// 			2) On startup, generate preferences (total 5) and store
-// 				a) 2 like
-// 				b) 2 don't like
-// 				c) 1 randomly like or don't like
-// 			3) API path to reset preferences
-//        <----->
-// 				x) Fn to calc group opinion score
-// 				x) Fn to calc local opinion, using group opinion score
-// 			6) Fn to update local meta 
-// 			7) Fn to generate preferences 
-// 			  [(for client prefs for parts and local group weight prefs)]
-// 
-// 
-
 const localId = config.local.id
 const weight1 = ((20 / (20 + 10 + 0)) / 2);
 const weight2 = ((10 / (20 + 10 + 0)) / 2);
@@ -51,11 +33,13 @@ const segmentationParts = [
 
 exports.generate = () => {
 	const choices = generateChoices();
-	const opinionatedChoices = hateOrLove(choices);
+	const segmentationOpinions = hateOrLove(choices);
+	const selfOrGroup = trustSelfOrGroup();
 
-	trustSelfOrGroup();
-
-	return opinionatedChoices;
+	return {
+		segmentationOpinions,
+		selfOrGroup
+	};
 }
 
 function generateChoices() {
@@ -85,9 +69,7 @@ function hateOrLove(choices) {
 }
 
 function trustSelfOrGroup() {
-	// const rand = Math.floor(Math.random() * 5);
-	// TODO:WARN: JUST FOR DEV
-	const rand = 0;
+	const rand = Math.floor(Math.random() * 5);
 
 	switch (rand) {
 		case 0:
@@ -126,6 +108,13 @@ function trustSelfOrGroup() {
 			groupWeight = .5;
 			break;
 	}
+	
+	const data = {
+		selfWeight,
+		groupWeight
+	};
+
+	return data;
 }
 
 exports.newFromClient = (member, newClientOpinions, localPreferences) => {
