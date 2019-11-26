@@ -119,11 +119,7 @@ function trustSelfOrGroup() {
 
 exports.newFromClient = (member, newClientOpinions, localPreferences) => {
 	const clientOpinion = calculateClientOpinion(newClientOpinions, localPreferences);
-	// console.log(clientOpinion);
-
 	const memberOpinions = getGroupOpinions(member);
-	// console.log("members", memberOpinions);
-
 	const localOpinion = calculateLocalOpinion(clientOpinion, memberOpinions);
 
 	gossip.updateScore(member, localOpinion)
@@ -140,33 +136,6 @@ function getGroupOpinions(member) {
 
 	return opinions;
 }
-
-// {
-// 	'127.0.0.1:3001~861942~9msfcj~0.0.0': {
-// 		meta: {
-// 			name: 'member1',
-// 			'identifier$': '127.0.0.1:3001~861942~9msfcj~0.0.0',
-// 			'tag$': null,
-// 			'v$': 0,
-// 			opinions: [Object]
-// 		},
-// 		host: '127.0.0.1:3001',
-// 		state: 0,
-// 		incarnation: 1574735861942
-// 	},
-// 	'127.0.0.1:3000~756458~14ugnl~0.0.0': {
-// 		meta: {
-// 			name: 'base',
-// 			'identifier$': '127.0.0.1:3000~756458~14ugnl~0.0.0',
-// 			'tag$': null,
-// 			'v$': 0,
-// 			opinions: [Object]
-// 		},
-// 		host: '127.0.0.1:3000',
-// 		state: 0,
-// 		incarnation: 1574734748269
-// 	}
-// }
 
 // ----------> Calculate Opinion Sent From Client <----------
 
@@ -193,13 +162,6 @@ function calculateClientOpinion(newClientOpinions, localPreferences) {
 }
 
 // ----------> Calculate Local Opinion <----------
-
-// NOTE: meta.opinion object:
-// {
-// 	id: config.local.name,
-// 	memberNumber: 4, // 1 through 7
-// 	score: 68.00
-// }
 
 function calculateLocalOpinion (clientOpinion, memberOpinions) {
 	const localScore = clientOpinion * selfWeight;

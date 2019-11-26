@@ -124,10 +124,10 @@ const newMonitor = () => {
 
 // NOTE: This is to be called on server startup, not for api use
 exports.initialScore = function (member) {
-	// console.log("");
-	// console.log("-----INITIAL OPINIONS-----");
-	// console.log(member.getLocalScore().meta.opinions);
-	// console.log("");
+	console.log("");
+	console.log("-----INITIAL OPINIONS-----");
+	console.log(member.getLocalScore().meta.opinions);
+	console.log("");
 }
 
 

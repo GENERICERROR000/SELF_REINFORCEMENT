@@ -1,13 +1,10 @@
 # GOSSIP PROTOCOL
 
-## TODO
-
-0. WARN Using private net for computers means not internet access (libraries and containers!) Talk to Tom or Rob about allocating and IP for the router?
-
 ## Certs
 
 `sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ./selfsigned.key -out selfsigned.crt`
 
+```
 Country Name (2 letter code) [AU]: US
 State or Province Name (full name) [Some-State]: NY
 Locality Name (eg, city) []:NY
@@ -15,7 +12,7 @@ Organization Name (eg, company) [Internet Widgits Pty Ltd]: xyz (Your - Organiza
 Organizational Unit Name (eg, section) []: xyz (Your Unit Name)
 Common Name (e.g. server FQDN or YOUR name) []: www.xyz.com (Your URL)
 Email Address []: Your email
-
+```
 
 ## Play Testing
 
