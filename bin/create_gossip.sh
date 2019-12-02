@@ -20,11 +20,17 @@ docker swarm init --advertise-addr <MANAGER-IP>:2377
 
 # Machine 2 (worker)
 docker swarm join --token <TOKEN> <MANAGER-IP>:2377
+docker node update --label-add <key>=<value> <node-id>
+
+# NOTE: could use this to host in cluster and push from my laptop
+# docker service create --name registry --publish published=5000,target=5000 registry:2
 
 # Machine 1
 docker node ls
 docker network create -d overlay gossip-net
 docker network ls
+
+# To deploy your application across the swarm, use `docker stack deploy`.
 
 # Base
 docker service create \

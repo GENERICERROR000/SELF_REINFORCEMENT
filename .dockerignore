@@ -5,4 +5,7 @@ package-lock.json
 Vagrantfile
 Dockerfile
 Makefile
-cluster.yml
+Gossip.yml
+playbook.yml
+.vagrant/
+.git/

@@ -8,7 +8,10 @@ ENV HOST=""
 ENV PORT=""
 ENV MODE=""
 ENV NAME=""
+ENV ID=""
 ENV BASES=""
+ENV PEER_SERVER=""
+ENV PEER_PORT=""
 
 COPY --chown=node . /usr/src/app
 
