@@ -1,5 +1,17 @@
 // NOTE: DISPLAY
 
+const outputStride = 16;
+const segmentationThreshold = 0.5;
+
+// const opacity = 1;
+const opacity = 0.8;
+const flipHorizontal = true;
+const maskBlurAmount = 0;
+
+let localStream;
+let net;
+let videoElement;
+
 const c1 = document.getElementById('c1');
 const c2 = document.getElementById('c2');
 const c3 = document.getElementById('c3');
@@ -7,10 +19,12 @@ const c4 = document.getElementById('c4');
 const c5 = document.getElementById('c5');
 const c6 = document.getElementById('c6');
 
-let opinions = [];
-let opinion;
-let index = 0;
-let oldCall;
+const v1 = document.getElementById('v1');
+const v2 = document.getElementById('v2');
+const v3 = document.getElementById('v3');
+const v4 = document.getElementById('v4');
+const v5 = document.getElementById('v5');
+const v6 = document.getElementById('v6');
 
 // -----> Create New Peer - Display <-----
 
@@ -22,52 +36,53 @@ const peer = new Peer('display', {
 
 // -----> Startup <-----
 
-// Init
-bootstrap();
+// bootstrap();
 
-// Check for opinions, start stream if any
-function bootstrap() {
+async function bootstrap() {
+	net = await bodyPix.load();
 
+	runNet();
 }
 
-// Connect to next opinion, telling it to send a stream
-function startStream() {
-	if (oldCall) {
-		oldCall.close();
-	}
+// -----> ML Segmentation <-----
 
-	if (opinions.length < index + 1) {
-		index = 0;
-		opinion = opinions[index];
-		console.log("streaming from:", opinion);
-	} else {
-		opinion = opinions[index];
-		index++;
-		console.log("streaming from:", opinion);
-	}
+async function runNet() {
+	let segmentation = await newSegment();
 
-	peer.connect(opinion);
-	setTimeout(opinionAvailable, 5000);
+	colorParts(segmentation);
+
+	runNet();
+}
+
+async function newSegment() {
+	let newSegmentation = await net.segmentPersonParts(v1, outputStride, segmentationThreshold);
+
+	return newSegmentation;
+}
+
+function colorParts(segmentation) {
+	const coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['HEAD']);
+
+	bodyPix.drawMask(canvas, v1, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
 }
 
 // -----> Define Peer Events <-----
 
-// When opinion connects, add it to opinions list
-peer.on('connection', (conn) => {
-	opinions.push(conn.peer)
-	console.log("opinion checked in");
-});
+// peer.on('connection', (conn) => {
+	
+// });
 
 // When receive a stream, display in 
 peer.on('call', (call) => {
-	oldCall = call
 	startChat();
 
 	async function startChat() {
 		call.answer();
 
 		call.on('stream', (remoteStream) => {
-			document.querySelector('video#remote').srcObject = remoteStream
+			v1.srcObject = remoteStream;
+			bootstrap();
+			// TODO:
 		});
 
 		call.on('close', () => {

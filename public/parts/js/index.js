@@ -79,17 +79,15 @@ function colorParts(segmentation) {
 	bodyPix.drawMask(canvas, videoElement, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
 }
 
-// -----> Stream Camera <-----
+// -----> Define Peer Events <-----
 
 // Connect to base and let it know this member exists
 // peer.connect('display');
 
-// When display connects, send stream of local camera
-// peer.on('connection', (conn) => {
-// 	const call = peer.call('display', videoElement.srcObject);
-// 	console.log("stream start");
 
-// 	call.on('close', () => {
-// 		console.log("stream end");
-// 	});
-// });
+const call = peer.call('display', videoElement.srcObject);
+console.log("stream start");
+
+call.on('close', () => {
+	console.log("stream end");
+});
