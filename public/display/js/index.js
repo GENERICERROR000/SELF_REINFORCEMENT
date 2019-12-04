@@ -1,5 +1,12 @@
 // NOTE: DISPLAY
 
+const c1 = document.getElementById('c1');
+const c2 = document.getElementById('c2');
+const c3 = document.getElementById('c3');
+const c4 = document.getElementById('c4');
+const c5 = document.getElementById('c5');
+const c6 = document.getElementById('c6');
+
 let opinions = [];
 let opinion;
 let index = 0;
@@ -8,23 +15,19 @@ let oldCall;
 // -----> Create New Peer - Display <-----
 
 const peer = new Peer('display', {
-	host: 'localhost', // TODO: Set on server startup
-	port: 3000,
+	host: BASE_URL,
+	port: BASE_PORT,
 	path: '/api/peer'
 });
 
-// -----> Start Stream <-----
+// -----> Startup <-----
 
 // Init
-opinionAvailable();
+bootstrap();
 
 // Check for opinions, start stream if any
-function opinionAvailable() {
-	if (opinions.length > 0) {
-		startStream();
-	} else {
-		setTimeout(opinionAvailable, 5000);
-	}
+function bootstrap() {
+
 }
 
 // Connect to next opinion, telling it to send a stream

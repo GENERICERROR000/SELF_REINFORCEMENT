@@ -1,7 +1,7 @@
 {
-    "name": "gossip",
+    "name": "SELF REINFORCEMENT",
     "version": "0.0.0",
-    "description": "Repo for gossip server and client.",
+    "description": "Repo for SELF REINFORCEMENT server and clientd.",
     "main": "index.js",
     "scripts": {
         "start": "PORT='3000' HOST='127.0.0.1' node index.js",

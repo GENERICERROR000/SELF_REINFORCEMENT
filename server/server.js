@@ -47,9 +47,8 @@ const peerServer = peer.ExpressPeerServer(server, peerOptions);
 
 app.use('/api/peer', peerServer);
 
-// ----------> Set Static Route <----------
+// ----------> Set Static Routes <----------
 
-app.use(express.static('public'));
 app.use(express.static('public'));
 
 app.use('/display', (req, res, next) => {
