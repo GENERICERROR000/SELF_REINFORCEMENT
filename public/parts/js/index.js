@@ -22,7 +22,8 @@ let videoElement;
 // -----> Create New Peer - Opinion <-----
 
 const peer = new Peer(id, {
-	host: BASE_URL,
+	host: "192.168.1.182",
+	// host: BASE_URL,
 	port: BASE_PORT,
 	path: '/api/peer'
 });
@@ -38,9 +39,8 @@ async function bootstrap() {
 
 	call = peer.call('display', videoElement.srcObject);
 
-	call.on('close', () => {
-		console.log("stream end");
-	});
+	call.on('close', () => console.log("stream end"));
+	call.on('error', (err) => console.log(err));
 
 	runNet();
 }
@@ -85,14 +85,3 @@ function colorParts(segmentation) {
 
 	bodyPix.drawMask(canvas, videoElement, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
 }
-
-// -----> Define Peer Events <-----
-
-// Connect to base and let it know this member exists
-// peer.connect('display');
-
-// const call = peer.call('display', videoElement.srcObject);
-
-// call.on('close', () => {
-// 	console.log("stream end");
-// });

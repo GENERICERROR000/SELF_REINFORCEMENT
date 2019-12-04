@@ -11,24 +11,29 @@ let localStream;
 let net;
 let videoElement;
 
-const c1 = document.getElementById('c1');
-const c2 = document.getElementById('c2');
-const c3 = document.getElementById('c3');
-const c4 = document.getElementById('c4');
-const c5 = document.getElementById('c5');
-const c6 = document.getElementById('c6');
+const canvases = {
+	c1: document.getElementById('c1'),
+	c2: document.getElementById('c2'),
+	c3: document.getElementById('c3'),
+	c4: document.getElementById('c4'),
+	c5: document.getElementById('c5'),
+	c6: document.getElementById('c6')
+}
 
-const v1 = document.getElementById('v1');
-const v2 = document.getElementById('v2');
-const v3 = document.getElementById('v3');
-const v4 = document.getElementById('v4');
-const v5 = document.getElementById('v5');
-const v6 = document.getElementById('v6');
+const videos = {
+	v1: document.getElementById('v1'),
+	v2: document.getElementById('v2'),
+	v3: document.getElementById('v3'),
+	v4: document.getElementById('v4'),
+	v5: document.getElementById('v5'),
+	v6: document.getElementById('v6')
+}
 
 // -----> Create New Peer - Display <-----
 
 const peer = new Peer('display', {
-	host: BASE_URL,
+	host: "192.168.1.182",
+	// host: BASE_URL,
 	port: BASE_PORT,
 	path: '/api/peer'
 });
@@ -37,78 +42,92 @@ const peer = new Peer('display', {
 
 // bootstrap();
 
-async function bootstrap() {
+async function bootstrapPart(vid, id) {
 	net = await bodyPix.load();
 
-	runNet();
+	runNet(vid, id);
 }
 
 // -----> ML Segmentation <-----
 
-async function runNet() {
-	let segmentation = await newSegment();
+async function runNet(vid, id) {
+	let segmentation = await newSegment(vid);
 
-	colorParts(segmentation);
+	colorParts(segmentation, vid, id);
 
-	runNet();
+	runNet(vid, id);
 }
 
-async function newSegment() {
-	let newSegmentation = await net.segmentPersonParts(v1, outputStride, segmentationThreshold);
+async function newSegment(vid) {
+	let newSegmentation = await net.segmentPersonParts(vid, outputStride, segmentationThreshold);
 
 	return newSegmentation;
 }
 
-function colorParts(segmentation) {
-	const coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['HEAD']);
+function colorParts(segmentation, vid, id) {
+	let coloredPartImage;
 
-	bodyPix.drawMask(c1, v1, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
+	switch (id) {
+		case "1":
+			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['HEAD']);
+			break;
+
+		case "2":
+			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['BODY']);
+			break;
+
+		case "3":
+			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['RIGHT_ARM']);
+			break;
+	
+		case "4":
+			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['LEFT_ARM']);
+			break;
+	
+		case "5":
+			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['RIGHT_LEG']);
+			break;
+	
+		case "6":
+			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['LEFT_LEG']);
+			break;
+	
+		default:
+			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['DEFAULT_COLORS']);
+			break;
+	}
+
+	bodyPix.drawMask(canvases["c"+id], vid, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
 }
 
 // -----> Define Peer Events <-----
 
-// peer.on('connection', (conn) => {
-	
-// });
-
 // When receive a stream, display in 
 peer.on('call', (call) => {
-	console.log("client connected")
-	startChat();
+	console.log("client connected:", call.peer)
+	call.answer();
 
-	function startChat() {
-		call.answer();
-
-		call.on('stream', async (remoteStream) => {
-			v1.srcObject = remoteStream;
-			
-			await videoReady(v1);
-
-			bootstrap();
-		});
-
-		call.on('close', () => {
-			console.log("closing stream from:", call.peer);
-		});
-	}
-
-	function videoReady(vidEl) {
-		return new Promise((resolve) => {
-			vidEl.onloadedmetadata = () => {
-				vidEl.width = vidEl.videoWidth;
-				vidEl.height = vidEl.videoHeight;
-				resolve(vidEl);
-			};
-		});
-	}
+	call.on('stream', (remoteStream) => handleStream(remoteStream, call.peer));
+	call.on('close', () => console.log("closing stream from:", call.peer));
+	call.on('error', (err) => console.log(err));
 });
 
-// If lose connection to an opinion, remove it from opinions list
-peer.on('error', (err) => {
-	if (err.type == "peer-unavailable" && opinions.length > 0) {
-		opinions = opinions.filter(e => e !== opinion);
-		index = 0;
-		console.log("peer unavailable:", opinion);
-		console.log("resetting index");
-	}
-});
+async function handleStream(remoteStream, id) {
+	let vid = videos["v"+id];
+
+	vid.srcObject = remoteStream;
+
+	await videoReady(vid);
+
+	bootstrapPart(vid, id);
+}
+
+function videoReady(vidEl) {
+	return new Promise((resolve) => {
+		vidEl.onloadedmetadata = () => {
+			vidEl.width = vidEl.videoWidth;
+			vidEl.height = vidEl.videoHeight;
+			resolve(vidEl);
+		};
+	});
+}
