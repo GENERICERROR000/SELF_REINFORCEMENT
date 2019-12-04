@@ -22,7 +22,7 @@ let videoElement;
 // -----> Create New Peer - Opinion <-----
 
 const peer = new Peer(id, {
-	host: "192.168.1.182",
+	host: "10.18.71.244",
 	// host: BASE_URL,
 	port: BASE_PORT,
 	path: '/api/peer'
