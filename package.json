@@ -4,11 +4,7 @@
     "description": "Repo for gossip server and client.",
     "main": "index.js",
     "scripts": {
-        "start": "nodemon index.js",
-        "base": "PORT='3000' MODE='base' NAME='base' ID=0 node index.js",
-        "member1": "PORT='3001' MODE='member' NAME='member1' ID=1 node index.js",
-        "member2": "PORT='3002' MODE='member' NAME='member2' ID=2 node index.js",
-        "monitor": "PORT='3009' MODE='monitor' NAME='monitor' ID=9 node index.js",
+        "start": "PORT='3000' HOST='127.0.0.1' node index.js",
         "clean": "rm -rf node_modules yarn.lock package-lock.json"
     },
     "author": "Noah Kernis -//-",

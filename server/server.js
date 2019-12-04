@@ -7,26 +7,14 @@ const fs = require('fs');
 const logger = require('morgan');
 const peer = require('peer');
 const config = require('./config/config');
-const apiRoutes = require('./src/routes');
-
-const mode = config.local.mode;
 
 // ----------> Create Config File For Clients <----------
 
 const toWrite = `
-	const BASE_URL = '${config.local.host}';
-	const BASE_PORT = '${config.local.port}';
-	const PEER_SERVER = '${config.cluster.peerServer}';
-	const PEER_PORT = '${config.cluster.peerPort}';
+	const BASE_URL = '${config.host}';
+	const BASE_PORT = '${config.port}';
 `
-
-if (mode == 'base') {
-	fs.writeFileSync(__dirname + '/../public/display/js/env.js', toWrite)
-}
-
-if (mode == 'member') {
-	fs.writeFileSync(__dirname + '/../public/opinion/js/env.js', toWrite)
-}
+fs.writeFileSync(__dirname + '/../public/js/env.js', toWrite)
 
 // ----------> Create HTTPS Server <----------
 
@@ -50,34 +38,16 @@ app.use(bodyParser.json());
 
 // ----------> Set Route for PeerJS API <----------
 
-if (mode == 'base') {
-	const peerOptions = {
-		debug: false
-	};
+const peerOptions = {
+	debug: false
+};
 
-	const peerServer = peer.ExpressPeerServer(server, peerOptions);
+const peerServer = peer.ExpressPeerServer(server, peerOptions);
 
-	app.use('/api/peer', peerServer);
-}
+app.use('/api/peer', peerServer);
 
-// ----------> Set Static Routes <----------
+// ----------> Set Static Route <----------
 
-app.use(express.static('public/root'));
-
-if (mode == 'base') {
-	app.use('/display', (req, res, next) => {
-		express.static('public/display')(req, res, next);
-	});
-}
-
-if (mode == 'member') {
-	app.use('/opinion', (req, res, next) => {
-		express.static('public/opinion')(req, res, next);
-	});
-}
-
-// ----------> Set API Routes <----------
-
-app.use(apiRoutes);
+app.use(express.static('public'));
 
 module.exports = server;

@@ -1,5 +1,5 @@
 'use strict'
-const port = require('./server/config/config').local.port
+const port = require('./server/config/config').port
 const server = require('./server/server')
 
 server.listen(port, (err) => {
