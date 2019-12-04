@@ -14,17 +14,18 @@ const opacity = 0.8;
 const flipHorizontal = true;
 const maskBlurAmount = 0;
 
+let call;
 let localStream;
 let net;
 let videoElement;
 
 // -----> Create New Peer - Opinion <-----
 
-// const peer = new Peer(id, {
-// 	host: BASE_URL,
-// 	port: BASE_PORT,
-// 	path: '/api/peer'
-// });
+const peer = new Peer(id, {
+	host: BASE_URL,
+	port: BASE_PORT,
+	path: '/api/peer'
+});
 
 // -----> Startup <-----
 
@@ -34,6 +35,12 @@ async function bootstrap() {
 	videoElement = await setupCamera();
 
 	net = await bodyPix.load();
+
+	call = peer.call('display', videoElement.srcObject);
+
+	call.on('close', () => {
+		console.log("stream end");
+	});
 
 	runNet();
 }
@@ -84,10 +91,8 @@ function colorParts(segmentation) {
 // Connect to base and let it know this member exists
 // peer.connect('display');
 
+// const call = peer.call('display', videoElement.srcObject);
 
-const call = peer.call('display', videoElement.srcObject);
-console.log("stream start");
-
-call.on('close', () => {
-	console.log("stream end");
-});
+// call.on('close', () => {
+// 	console.log("stream end");
+// });

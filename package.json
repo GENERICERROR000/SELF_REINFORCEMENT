@@ -1,5 +1,5 @@
 {
-    "name": "SELF REINFORCEMENT",
+    "name": "self_reinforcement",
     "version": "0.0.0",
     "description": "Repo for SELF REINFORCEMENT server and clientd.",
     "main": "index.js",

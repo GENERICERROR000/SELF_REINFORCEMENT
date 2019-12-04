@@ -3,8 +3,7 @@
 const outputStride = 16;
 const segmentationThreshold = 0.5;
 
-// const opacity = 1;
-const opacity = 0.8;
+const opacity = 1;
 const flipHorizontal = true;
 const maskBlurAmount = 0;
 
@@ -63,7 +62,7 @@ async function newSegment() {
 function colorParts(segmentation) {
 	const coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['HEAD']);
 
-	bodyPix.drawMask(canvas, v1, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
+	bodyPix.drawMask(c1, v1, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
 }
 
 // -----> Define Peer Events <-----
@@ -74,19 +73,32 @@ function colorParts(segmentation) {
 
 // When receive a stream, display in 
 peer.on('call', (call) => {
+	console.log("client connected")
 	startChat();
 
-	async function startChat() {
+	function startChat() {
 		call.answer();
 
-		call.on('stream', (remoteStream) => {
+		call.on('stream', async (remoteStream) => {
 			v1.srcObject = remoteStream;
+			
+			await videoReady(v1);
+
 			bootstrap();
-			// TODO:
 		});
 
 		call.on('close', () => {
 			console.log("closing stream from:", call.peer);
+		});
+	}
+
+	function videoReady(vidEl) {
+		return new Promise((resolve) => {
+			vidEl.onloadedmetadata = () => {
+				vidEl.width = vidEl.videoWidth;
+				vidEl.height = vidEl.videoHeight;
+				resolve(vidEl);
+			};
 		});
 	}
 });
