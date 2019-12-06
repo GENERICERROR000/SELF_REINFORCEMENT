@@ -41,8 +41,6 @@ const peer = new Peer('display', {
 
 // -----> Startup <-----
 
-// bootstrap();
-
 async function bootstrapPart(vid, id) {
 	net = await bodyPix.load();
 
@@ -54,7 +52,7 @@ async function bootstrapPart(vid, id) {
 async function runNet(vid, id) {
 	let segmentation = await newSegment(vid);
 
-	colorParts(segmentation, vid, id);
+	renderSegment(segmentation, vid, id);
 
 	runNet(vid, id);
 }
@@ -65,40 +63,39 @@ async function newSegment(vid) {
 	return newSegmentation;
 }
 
-function colorParts(segmentation, vid, id) {
-	let coloredPartImage;
-
-	switch (id) {
-		case "1":
-			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['HEAD']);
-			break;
-
-		case "2":
-			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['BODY']);
-			break;
-
-		case "3":
-			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['RIGHT_ARM']);
-			break;
-	
-		case "4":
-			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['LEFT_ARM']);
-			break;
-	
-		case "5":
-			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['RIGHT_LEG']);
-			break;
-	
-		case "6":
-			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['LEFT_LEG']);
-			break;
-	
-		default:
-			coloredPartImage = bodyPix.toColoredPartMask(segmentation, BODY_COLORS['DEFAULT_COLORS']);
-			break;
-	}
+function renderSegment(segmentation, vid, id) {
+	let coloredPartImage = whichColor(segmentation, id);
 
 	bodyPix.drawMask(canvases["c"+id], vid, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
+}
+
+function whichColor(segmentation, id) {
+	switch (id) {
+		case "1":
+			return createMask(segmentation, BODY_COLORS['HEAD']);
+
+		case "2":
+			return createMask(segmentation, BODY_COLORS['BODY']);
+
+		case "3":
+			return createMask(segmentation, BODY_COLORS['RIGHT_ARM']);
+
+		case "4":
+			return createMask(segmentation, BODY_COLORS['LEFT_ARM']);
+
+		case "5":
+			return createMask(segmentation, BODY_COLORS['RIGHT_LEG']);
+
+		case "6":
+			return createMask(segmentation, BODY_COLORS['LEFT_LEG']);
+
+		default:
+			return createMask(segmentation, BODY_COLORS['DEFAULT_COLORS']);
+	}
+}
+
+function createMask(segmentation, colors) {
+	return bodyPix.toColoredPartMask(segmentation, colors);
 }
 
 // -----> Define Peer Events <-----
