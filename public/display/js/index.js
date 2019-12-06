@@ -32,7 +32,8 @@ const videos = {
 // -----> Create New Peer - Display <-----
 
 const peer = new Peer('display', {
-	host: "10.18.71.244",
+	// host: "10.18.71.244",
+	host: "192.168.1.182",
 	// host: BASE_URL,
 	port: BASE_PORT,
 	path: '/api/peer'
