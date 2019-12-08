@@ -1,0 +1,47 @@
+<html>
+
+<head>
+		<title>BALLS</title>
+		<script type="text/javascript" src="https://rawgit.com/131/h264-live-player/master/vendor/dist/http-live-player.js"></script>
+</head>
+
+<body>
+
+	<button type="button" onclick="carl()">Start Video</button>
+	<button type="button" onclick="wsavc.stopStream()">Stop Video</button>
+	<button type="button" onclick="wsavc.disconnect()">Disconnect</button>
+	<br />
+
+	<script type="text/javascript">
+		var canvas = document.createElement("canvas");
+		var video = document.createElement("video");
+
+		document.body.appendChild(canvas);
+		document.body.appendChild(video);
+		
+		// Create h264 player
+		var uri = "ws://10.23.10.34:8080"
+		var wsavc = new WSAvcPlayer(canvas, "webgl", 1, 35);
+		wsavc.connect(uri);
+
+		//expose instance for button callbacks
+		window.wsavc = wsavc;
+
+
+
+		function carl() {
+			wsavc.playStream(); 
+			
+			var ctx = canvas.getContext('webgl'); // or whatever ('webgl', 'webgl2' ...)
+			var stream = canvas.captureStream();
+
+			// console.log(stream)
+			
+			video.srcObject = stream;
+			video.play();
+		}
+
+	</script>
+</body>
+
+</html>

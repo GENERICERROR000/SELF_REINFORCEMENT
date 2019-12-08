@@ -2,7 +2,8 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const helmet = require('helmet');
-const https = require('https');
+// const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const logger = require('morgan');
 const peer = require('peer');
@@ -29,7 +30,8 @@ const options = {
 	cert: cert
 };
 
-const server = https.createServer(options, app);
+// const server = https.createServer(options, app);
+const server = http.createServer(app);;
 
 // ----------> Set Middleware <----------
 

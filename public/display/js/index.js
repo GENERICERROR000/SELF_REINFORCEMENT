@@ -31,13 +31,13 @@ const videos = {
 
 // -----> Create New Peer - Display <-----
 
-const peer = new Peer('display', {
-	// host: "10.18.71.244",
-	host: "192.168.1.182",
-	// host: BASE_URL,
-	port: BASE_PORT,
-	path: '/api/peer'
-});
+// const peer = new Peer('display', {
+// 	// host: "10.18.71.244",
+// 	host: "192.168.1.182",
+// 	// host: BASE_URL,
+// 	port: BASE_PORT,
+// 	path: '/api/peer'
+// });
 
 // -----> Startup <-----
 
@@ -71,22 +71,22 @@ function renderSegment(segmentation, vid, id) {
 
 function whichColor(segmentation, id) {
 	switch (id) {
-		case "1":
+		case 1:
 			return createMask(segmentation, BODY_COLORS['HEAD']);
 
-		case "2":
+		case 2:
 			return createMask(segmentation, BODY_COLORS['BODY']);
 
-		case "3":
+		case 3:
 			return createMask(segmentation, BODY_COLORS['RIGHT_ARM']);
 
-		case "4":
+		case 4:
 			return createMask(segmentation, BODY_COLORS['LEFT_ARM']);
 
-		case "5":
+		case 5:
 			return createMask(segmentation, BODY_COLORS['RIGHT_LEG']);
 
-		case "6":
+		case 6:
 			return createMask(segmentation, BODY_COLORS['LEFT_LEG']);
 
 		default:
@@ -101,16 +101,41 @@ function createMask(segmentation, colors) {
 // -----> Define Peer Events <-----
 
 // When receive a stream, display in 
-peer.on('call', (call) => {
-	console.log("client connected:", call.peer)
-	call.answer();
+// peer.on('call', (call) => {
+// 	console.log("client connected:", call.peer)
+// 	call.answer();
 
-	call.on('stream', (remoteStream) => handleStream(remoteStream, call.peer));
-	call.on('close', () => console.log("closing stream from:", call.peer));
-	call.on('error', (err) => console.log(err));
-});
+// 	call.on('stream', (remoteStream) => handleStream(remoteStream, call.peer));
+// 	call.on('close', () => console.log("closing stream from:", call.peer));
+// 	call.on('error', (err) => console.log(err));
+// });
 
-async function handleStream(remoteStream, id) {
+
+// var canvas1 = document.getElementById('c1')
+var canvas1 = document.createElement("canvas");
+var uri = "ws://10.23.10.34:8080"
+var wsavc = new WSAvcPlayer(canvas1, "webgl", 1, 35);
+wsavc.connect(uri);
+
+setTimeout(() => startit(), 2000);
+setTimeout(() => handleStream(1), 3000);
+setTimeout(() => handleStream(2), 4000);
+setTimeout(() => handleStream(3), 5000);
+
+function startit() {
+	wsavc.playStream();
+	// var ctx = canvas1.getContext('webgl');
+	canvas1.getContext('webgl');
+}
+
+async function handleStream(id) {
+// async function handleStream(remoteStream, id) {
+	// wsavc.playStream();
+	// // var ctx = canvas1.getContext('webgl');
+	// canvas1.getContext('webgl');
+	
+	var remoteStream = canvas1.captureStream();
+
 	let vid = videos["v"+id];
 
 	vid.srcObject = remoteStream;
