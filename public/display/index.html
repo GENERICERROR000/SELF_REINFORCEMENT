@@ -5,14 +5,6 @@
 	<meta charset="utf-8" />
 	<title>DISPLAY</title>
 
-	<!-- Load http-live-player.js -->
-	<script type="text/javascript" src="https://rawgit.com/131/h264-live-player/master/vendor/dist/http-live-player.js"></script>
-	<!-- Load TensorFlow.js -->
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.2"></script>
-	<!-- Load BodyPix -->
-	<!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.0"></script> -->
-	<!-- Load PeerJS -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.16/peer.min.js"></script>
 </head>
 
 <body>
@@ -42,7 +34,11 @@
 	<video id="v5" autoplay style="width:200px;-webkit-transform:scaleX(-1);transform:scaleX(-1);"></video> 5 
 	<video id="v6" autoplay style="width:200px;-webkit-transform:scaleX(-1);transform:scaleX(-1);"></video> 6 
 
-	<script src="js/custom_bodypix.js"></script>
+	
+	<script src="lib/tfjs1-2.js"></script>
+	<script src="lib/custom-bodypix.js"></script>
+	<script src="lib/http-live-player.js"></script>
+
 	<script src="js/env.js"></script>
 	<script src="js/part_colors.js"></script>
 	<script src="js/index.js"></script>
