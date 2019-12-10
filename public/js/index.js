@@ -9,16 +9,6 @@ const hiddenCanvas_2 = document.createElement("canvas");
 const hiddenCanvas_3 = document.createElement("canvas");
 const hiddenCanvas_4 = document.createElement("canvas");
 
-hiddenCanvas_1.getContext('webgl');
-hiddenCanvas_2.getContext('webgl');
-hiddenCanvas_3.getContext('webgl');
-hiddenCanvas_4.getContext('webgl');
-
-const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
-const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
-const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
-const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
-
 const canvases = {
 	head: document.getElementById('head'),
 	torso: document.getElementById('torso'),
@@ -44,14 +34,14 @@ const state = {
 
 const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
 
-let ready = false
+let ready = false;
 let localStream;
 let net;
 let videoElement;
 
 // NOTE: -----> Setup System <-----
 
-setTimeout(() => setup(), 5000);
+setTimeout(() => setup(), 1000);
 // setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 2000);
 // setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 3000);
 // setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 4000);
@@ -62,30 +52,37 @@ setTimeout(() => setup(), 5000);
 // , 5000);
 
 setTimeout(() => {
-	ready = true
-	loadStreams("stream2", hiddenCanvas_2)
-}, 10000);
+	ready = true;
+	loadStreams("stream2", hiddenCanvas_2);
+}, 3000);
 
 // NOTE: -----> Setup Streams <-----
 
-async function setup() {
+function setup() {
 	const uriStream_1 = "ws://stream1.local:8080";
 	const uriStream_2 = "ws://stream2.local:8080";
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
-	// getStream(uriStream_1, wsavc_1);
-	await getStream(uriStream_2, wsavc_2);
-	// getStream(uriStream_3, wsavc_3);
-	// getStream(uriStream_4, wsavc_4);
-}
+	const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
+	const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
+	const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
+	const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
 
-function getStream(uri, wsavc) {
-	return new Promise((resolve) => {
-		wsavc.connect(uri);
-		wsavc.playStream();
-		resolve();
-	});
+	wsavc_1.connect(uriStream_1);
+	wsavc_2.connect(uriStream_2);
+	wsavc_3.connect(uriStream_3);
+	wsavc_4.connect(uriStream_4);
+
+	wsavc1.playStream();
+	wsavc2.playStream();
+	wsavc3.playStream();
+	wsavc4.playStream();
+
+	hiddenCanvas_1.getContext('webgl');
+	hiddenCanvas_2.getContext('webgl');
+	hiddenCanvas_3.getContext('webgl');
+	hiddenCanvas_4.getContext('webgl');
 }
 
 
@@ -118,8 +115,6 @@ function videoReady(vidEl) {
 }
 
 async function bootstrap() {
-	net = await bodyPix.load();
-
 	runNet("head");
 	runNet("torso");
 	runNet("rightArm");
@@ -130,8 +125,8 @@ async function bootstrap() {
 // NOTE: -----> BodyPix Segmentation <-----
 
 async function runNet(part) {
-	let whichStream = state[part]
-	let vid = videos[whichStream]
+	let whichStream = state[part];
+	let vid = videos[whichStream];
 
 	let segmentation = await newSegment(vid);
 
@@ -213,7 +208,7 @@ ws.onmessage = function (event) {
 };
 
 const handleMessage = (streamName, partName) => {
-	console.log(`Stream "${streamName}" has been sent to ${partName}`)
+	console.log(`Stream "${streamName}" has been sent to ${partName}`);
 
 	switch (partName) {
 		case "head":	
