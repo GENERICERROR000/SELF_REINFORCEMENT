@@ -51,7 +51,7 @@ let videoElement;
 
 // NOTE: -----> Setup System <-----
 
-setTimeout(() => setup(), 1000);
+setTimeout(() => setup(), 5000);
 // setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 2000);
 // setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 3000);
 // setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 4000);
@@ -64,7 +64,7 @@ setTimeout(() => setup(), 1000);
 setTimeout(() => {
 	ready = true
 	loadStreams("stream2", hiddenCanvas_2)
-}, 5000);
+}, 10000);
 
 // NOTE: -----> Setup Streams <-----
 
