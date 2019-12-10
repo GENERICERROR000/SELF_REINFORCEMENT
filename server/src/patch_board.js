@@ -1,6 +1,9 @@
 const Gpio = require('pigpio').Gpio;
 
 const startPatchBoard = (wss) => {
+	console.log("Srtating Patch Board...")
+	console.log("")
+
 	let startTickHead;
 	let startTickTorso;
 	let startTickArms;
@@ -137,7 +140,6 @@ const startPatchBoard = (wss) => {
 	// NOTE: -----> Start Writing Writing To GPIO <-----
 
 	setInterval(() => {
-		console.log("");
 		display1.trigger(25, 1);
 		display2.trigger(50, 1);
 		display3.trigger(75, 1);
