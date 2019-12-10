@@ -4,17 +4,17 @@ const opacity = 1;
 const flipHorizontal = true;
 const maskBlurAmount = 0;
 
-const hiddenCanvas1 = document.createElement("canvas");
-const hiddenCanvas2 = document.createElement("canvas");
-const hiddenCanvas3 = document.createElement("canvas");
-const hiddenCanvas4 = document.createElement("canvas");
+const hiddenCanvas_1 = document.createElement("canvas");
+const hiddenCanvas_2 = document.createElement("canvas");
+const hiddenCanvas_3 = document.createElement("canvas");
+const hiddenCanvas_4 = document.createElement("canvas");
 
 const canvases = {
-	c1: document.getElementById('c1'),
-	c2: document.getElementById('c2'),
-	c3: document.getElementById('c3'),
-	c4: document.getElementById('c4'),
-	c5: document.getElementById('c5')
+	head: document.getElementById('head'),
+	torso: document.getElementById('torso'),
+	rightArm: document.getElementById('right-arm'),
+	leftArm: document.getElementById('left-arm'),
+	legs: document.getElementById('legs')
 };
 
 const videos = {
@@ -22,6 +22,21 @@ const videos = {
 	stream2: document.getElementById('stream2'),
 	stream3: document.getElementById('stream3'),
 	stream4: document.getElementById('stream4')
+};
+
+// const state = {
+// 	stream1: "head",
+// 	stream2: "torso",
+// 	stream3: "arms",
+// 	stream4: "legs"
+// };
+
+const state = {
+	"head": "stream1",
+	"torso": "stream2",
+	"rightArm": "stream3",
+	"leftArm": "stream3",
+	"legs": "stream4"
 };
 
 const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
@@ -35,39 +50,39 @@ let videoElement;
 setup();
 
 function setup() {
-	const uriStream1 = "ws://stream1.local:5050";
-	const uriStream2 = "ws://stream2.local:5050";
-	const uriStream3 = "ws://stream3.local:5050";
-	const uriStream4 = "ws://stream4.local:5050";
+	const uriStream_1 = "ws://stream1.local:5050";
+	const uriStream_2 = "ws://stream2.local:5050";
+	const uriStream_3 = "ws://stream3.local:5050";
+	const uriStream_4 = "ws://stream4.local:5050";
 
 	// WARN: TODO: What are args 3 and 4?
-	const wsavc1 = new WSAvcPlayer(hiddenCanvas1, "webgl", 1, 35);
-	const wsavc2 = new WSAvcPlayer(hiddenCanvas2, "webgl", 1, 35);
-	const wsavc3 = new WSAvcPlayer(hiddenCanvas3, "webgl", 1, 35);
-	const wsavc4 = new WSAvcPlayer(hiddenCanvas4, "webgl", 1, 35);
+	const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
+	const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
+	const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
+	const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
 
-	wsavc1.connect(uriStream1);
-	wsavc2.connect(uriStream2);
-	wsavc3.connect(uriStream3);
-	wsavc4.connect(uriStream4);
+	wsavc_1.connect(uriStream_1);
+	wsavc_2.connect(uriStream_2);
+	wsavc_3.connect(uriStream_3);
+	wsavc_4.connect(uriStream_4);
 
-	wsavc1.playStream();
-	wsavc2.playStream();
-	wsavc3.playStream();
-	wsavc4.playStream();
+	wsavc_1.playStream();
+	wsavc_2.playStream();
+	wsavc_3.playStream();
+	wsavc_4.playStream();
 
-	hiddenCanvas1.getContext('webgl');
-	hiddenCanvas2.getContext('webgl');
-	hiddenCanvas3.getContext('webgl');
-	hiddenCanvas4.getContext('webgl');
+	hiddenCanvas_1.getContext('webgl');
+	hiddenCanvas_2.getContext('webgl');
+	hiddenCanvas_3.getContext('webgl');
+	hiddenCanvas_4.getContext('webgl');
 }
 
 // NOTE: -----> Start Streams (Bootstrap) <-----
 
-setTimeout(() => initStream(1, hiddenCanvas1), 2000);
-setTimeout(() => initStream(2, hiddenCanvas2), 3000);
-setTimeout(() => initStream(3, hiddenCanvas3), 4000);
-setTimeout(() => initStream(4, hiddenCanvas4), 5000);
+setTimeout(() => initStream(1, hiddenCanvas_1), 2000);
+setTimeout(() => initStream(2, hiddenCanvas_2), 3000);
+setTimeout(() => initStream(3, hiddenCanvas_3), 4000);
+setTimeout(() => initStream(4, hiddenCanvas_4), 5000);
 
 async function initStream(id, cvs) {
 	let remoteStream = cvs.captureStream();
@@ -116,29 +131,66 @@ async function newSegment(vid) {
 function renderSegment(segmentation, vid, id) {
 	let coloredPartImage = whichColor(segmentation, id);
 
-	bodyPix.drawMask(canvases["c"+id], vid, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
+	let c = selectCanvas(id);
+
+	bodyPix.drawMask(c, vid, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
 }
 
-// WARN: TODO: Fix colors to be correct!!!
+function selectCanvas(id) {
+	let s = "stream" + id
+
+	const state = {
+		"head": "stream1",
+		"torso": "stream2",
+		"rightArm": "stream3",
+		"leftArm": "stream3",
+		"legs": "stream4"
+	};
+
+	switch (id) {
+		case 1:
+			return canvases.head;
+
+		case 2:
+			return canvases.torso;
+
+		case 3:
+			return canvases.;
+
+		case 4:
+			return canvases.;
+
+		default:
+			console.log("Not a valid id");
+			return state["stream1"];
+	}
+}
+
+// WARN: This does not work - needs to return the mask. need to figure out above and below - using state so sockets can cause change
+
 function whichColor(segmentation, id) {
 	switch (id) {
 		case 1:
-			return createMask(segmentation, BODY_COLORS['HEAD']);
+			createMask(segmentation, BODY_COLORS['HEAD']);
+			return;
 
 		case 2:
-			return createMask(segmentation, BODY_COLORS['BODY']);
+			createMask(segmentation, BODY_COLORS['TORSO']);
+			return;
 
 		case 3:
-			return createMask(segmentation, BODY_COLORS['RIGHT_ARM']);
-			return createMask(segmentation, BODY_COLORS['LEFT_ARM']);
+			createMask(segmentation, BODY_COLORS['RIGHT_ARM']);
+			createMask(segmentation, BODY_COLORS['LEFT_ARM']);
+			return;
 
 		case 4:
-			return createMask(segmentation, BODY_COLORS['RIGHT_LEG']);
-			return createMask(segmentation, BODY_COLORS['LEFT_LEG']);
+			createMask(segmentation, BODY_COLORS['LEGS']);
+			return;
 
 		default:
 			console.log("This is id was no good:", id)
-			return createMask(segmentation, BODY_COLORS['DEFAULT_COLORS']);
+			createMask(segmentation, BODY_COLORS['DEFAULT_COLORS']);
+			return;
 	}
 }
 
@@ -155,16 +207,21 @@ ws.onerror = function () {
 };
 
 ws.onopen = function () {
-	console.log("The hatches are open!")
+	console.log("The hatches are open!");
 };
 
 ws.onclose = function () {
-	console.log("The hatches are closing!")
+	console.log("The hatches are closing!");
 	ws = null;
 };
 
 ws.onmessage = function (event) {
-	const data = JSON.parse(event.data);
+	const { streamName, partName } = JSON.parse(event.data);
 	
-	
+	handleMessage(streamName, partName);
 };
+
+const handleMessage = (streamName, partName) => {
+	console.log(`Stream "${streamName}" has been `)
+	state[streamName] = partName
+}

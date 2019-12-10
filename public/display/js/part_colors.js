@@ -51,7 +51,7 @@ const BODY_COLORS = {
 		[255, 255, 255], 	// left_feet
 		[255, 255, 255] 	// right_feet
 	],
-	BODY: [
+	TORSO: [
 		[255, 255, 255], 	// left_face
 		[255, 255, 255], 	// right_face
 		[255, 255, 255], 	// left_upper_arm_front
@@ -129,33 +129,7 @@ const BODY_COLORS = {
 		[255, 255, 255], 	// left_feet
 		[255, 255, 255] 	// right_feet
 	],
-	RIGHT_LEG: [
-		[255, 255, 255], 	// left_face
-		[255, 255, 255], 	// right_face
-		[255, 255, 255], 	// left_upper_arm_front
-		[255, 255, 255], 	// left_upper_arm_back
-		[255, 255, 255], 	// right_upper_arm_front
-		[255, 255, 255], 	// right_upper_arm_back
-		[255, 255, 255], 	// left_lower_arm_front
-		[255, 255, 255], 	// left_lower_arm_back
-		[255, 255, 255], 	// right_lower_arm_front
-		[255, 255, 255], 	// right_lower_arm_back
-		[255, 255, 255], 	// left_hand
-		[255, 255, 255], 	// right_hand
-		[255, 255, 255], 	// torso_front
-		[255, 255, 255], 	// torso_back
-		[255, 255, 255], 	// left_upper_leg_front
-		[255, 255, 255], 	// left_upper_leg_back
-		[110, 64, 170], 	// right_upper_leg_front
-		[110, 64, 170], 	// right_upper_leg_back
-		[255, 255, 255], 	// left_lower_leg_front
-		[255, 255, 255], 	// left_lower_leg_back
-		[110, 64, 170], 	// right_lower_leg_front
-		[110, 64, 170], 	// right_lower_leg_back
-		[255, 255, 255], 	// left_feet
-		[110, 64, 170] 		// right_feet
-	],
-	LEFT_LEG: [
+	LEGS: [
 		[255, 255, 255], 	// left_face
 		[255, 255, 255], 	// right_face
 		[255, 255, 255], 	// left_upper_arm_front
@@ -172,13 +146,13 @@ const BODY_COLORS = {
 		[255, 255, 255], 	// torso_back
 		[110, 64, 170], 	// left_upper_leg_front
 		[110, 64, 170], 	// left_upper_leg_back
-		[255, 255, 255], 	// right_upper_leg_front
-		[255, 255, 255], 	// right_upper_leg_back
+		[110, 64, 170], 	// right_upper_leg_front
+		[110, 64, 170], 	// right_upper_leg_back
 		[110, 64, 170], 	// left_lower_leg_front
 		[110, 64, 170], 	// left_lower_leg_back
-		[255, 255, 255], 	// right_lower_leg_front
-		[255, 255, 255], 	// right_lower_leg_back
+		[110, 64, 170], 	// right_lower_leg_front
+		[110, 64, 170], 	// right_lower_leg_back
 		[110, 64, 170], 	// left_feet
-		[255, 255, 255] 	// right_feet
+		[110, 64, 170] 		// right_feet
 	]
 };

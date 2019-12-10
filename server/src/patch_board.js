@@ -54,7 +54,7 @@ const startPatchBoard = (wss) => {
 		alert: true
 	});
 
-	// NOTE: -----> Patch Board - Alert Actions <-----
+	// NOTE: -----> Alert Actions <-----
 
 	const determineStream = (x, partName) => {
 		if ( 15 < x < 35 ) {
