@@ -9,6 +9,11 @@ const hiddenCanvas_2 = document.createElement("canvas");
 const hiddenCanvas_3 = document.createElement("canvas");
 const hiddenCanvas_4 = document.createElement("canvas");
 
+const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
+const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
+const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
+const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
+
 const canvases = {
 	head: document.getElementById('head'),
 	torso: document.getElementById('torso'),
@@ -39,9 +44,24 @@ let localStream;
 let net;
 let videoElement;
 
-// NOTE: -----> Setup Streams <-----
+// NOTE: -----> Setup System <-----
 
-setup();
+setTimeout(() => setup(), 1000);
+// setTimeout(() => loadStreams("stream1", wsavc_1), 2000);
+// setTimeout(() => loadStreams("stream2", wsavc_2), 3000);
+// setTimeout(() => loadStreams("stream3", wsavc_3), 4000);
+// setTimeout(() => {
+// 		ready = true
+// 		loadStreams("stream4", wsavc_4)
+// 	}
+// , 5000);
+
+setTimeout(() => {
+	ready = true
+	loadStreams("stream2", wsavc_2)
+}, 2000);
+
+// NOTE: -----> Setup Streams <-----
 
 function setup() {
 	const uriStream_1 = "ws://stream1.local:8080";
@@ -49,16 +69,14 @@ function setup() {
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
-	// getStream(uriStream_1, hiddenCanvas_1);
-	getStream(uriStream_2, hiddenCanvas_2);
-	// getStream(uriStream_3, hiddenCanvas_3);
-	// getStream(uriStream_4, hiddenCanvas_4);
+	// getStream(uriStream_1, wsavc_1);
+	getStream(uriStream_2, wsavc_2);
+	// getStream(uriStream_3, wsavc_3);
+	// getStream(uriStream_4, wsavc_4);
 }
 
-async function getStream(uri, cvs) {
-	const wsavc = new WSAvcPlayer(cvs, "webgl", 1, 35);
-
-	await wsavc.connect(uri);
+function getStream(uri, wsavc) {
+	wsavc.connect(uri);
 
 	wsavc.playStream();
 
@@ -66,22 +84,7 @@ async function getStream(uri, cvs) {
 }
 
 
-
 // NOTE: -----> Start Streams (Bootstrap) <-----
-
-// setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 2000);
-// setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 3000);
-// setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 4000);
-// setTimeout(() => {
-// 		ready = true
-// 		loadStreams("stream4", hiddenCanvas_4)
-// 	}
-// , 5000);
-
-setTimeout(() => {
-	ready = true
-	loadStreams("stream2", hiddenCanvas_2)
-}, 2000);
 
 async function loadStreams(id, cvs) {
 	let remoteStream = cvs.captureStream();
@@ -173,7 +176,7 @@ function whichPart(segmentation, part) {
 			};
 		default:
 			console.log("Something went wrong picking a part")
-			return;
+			return {};
 	}
 }
 
