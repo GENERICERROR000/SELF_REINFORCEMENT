@@ -75,6 +75,7 @@ function setup() {
 	// hiddenCanvas_4.getContext('webgl');
 }
 function getStream(uri, cvs) {
+	console.log(cvs)
 	const ww = new Worker('lib/http-live-player-worker.js');
 	const ofc = cvs.transferControlToOffscreen()
 
