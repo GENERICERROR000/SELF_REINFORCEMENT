@@ -22,9 +22,7 @@ const server = http.createServer(app);
 
 // NOTE: -----> Set Middleware <-----
 
-// TODO: Set for prod logs
-app.use(logger('combined'));
-// app.use(logger('common'));
+app.use(logger('common'));
 app.use(helmet());
 
 // NOTE: -----> Set Static Directory <-----
