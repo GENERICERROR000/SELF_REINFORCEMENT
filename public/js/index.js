@@ -53,45 +53,15 @@ function setup() {
 	getStream(uriStream_2, hiddenCanvas_2);
 	// getStream(uriStream_3, hiddenCanvas_3);
 	// getStream(uriStream_4, hiddenCanvas_4);
-
-	// const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
-	// const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
-	// const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
-	// const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
-
-	// wsavc_1.connect(uriStream_1);
-	// wsavc_2.connect(uriStream_2);
-	// wsavc_3.connect(uriStream_3);
-	// wsavc_4.connect(uriStream_4);
-
-	// wsavc_1.playStream();
-	// wsavc_2.playStream();
-	// wsavc_3.playStream();
-	// wsavc_4.playStream();
-
-	// hiddenCanvas_1.getContext('webgl');
-	// hiddenCanvas_2.getContext('webgl');
-	// hiddenCanvas_3.getContext('webgl');
-	// hiddenCanvas_4.getContext('webgl');
 }
 function getStream(uri, cvs) {
-	const ww = new Worker('lib/http-live-player-worker.js');
-	cvs.getContext('webgl')
-	const ofc = cvs.transferControlToOffscreen()
+	const wsavc = new WSAvcPlayer(cvs, "webgl", 1, 35);
 
-	ww.postMessage({
-		cmd: 'init',
-		canvas: ofc
-	}, [ofc]);
+	wsavc.connect(uri);
 
-	ww.postMessage({
-		cmd: 'connect',
-		url: uri
-	});
+	wsavc.playStream();
 
-	ww.postMessage({
-		cmd: 'play'
-	});
+	cvs.getContext('webgl');
 }
 
 
