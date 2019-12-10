@@ -49,10 +49,10 @@ function setup() {
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
-	getStream(uriStream_1, hiddenCanvas_1);
+	// getStream(uriStream_1, hiddenCanvas_1);
 	getStream(uriStream_2, hiddenCanvas_2);
-	getStream(uriStream_3, hiddenCanvas_3);
-	getStream(uriStream_4, hiddenCanvas_4);
+	// getStream(uriStream_3, hiddenCanvas_3);
+	// getStream(uriStream_4, hiddenCanvas_4);
 
 	// const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
 	// const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
@@ -97,18 +97,24 @@ function getStream(cvs, uri) {
 
 // NOTE: -----> Start Streams (Bootstrap) <-----
 
-setTimeout(() => loadStreams(1, hiddenCanvas_1), 2000);
-setTimeout(() => loadStreams(2, hiddenCanvas_2), 3000);
-setTimeout(() => loadStreams(3, hiddenCanvas_3), 4000);
+// setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 2000);
+// setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 3000);
+// setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 4000);
+// setTimeout(() => {
+// 		ready = true
+// 		loadStreams("stream4", hiddenCanvas_4)
+// 	}
+// , 5000);
+
 setTimeout(() => {
-		loadStreams(4, hiddenCanvas_4)
-	}
-, 5000);
+	ready = true
+	loadStreams("stream2", hiddenCanvas_4)
+}, 5000);
 
 async function loadStreams(id, cvs) {
 	let remoteStream = cvs.captureStream();
 
-	let vid = videos["stream" + id];
+	let vid = videos[id];
 
 	vid.srcObject = remoteStream;
 
