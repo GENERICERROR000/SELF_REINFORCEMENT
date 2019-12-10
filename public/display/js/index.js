@@ -1,15 +1,13 @@
-// NOTE: DISPLAY
-
 const outputStride = 16;
 const segmentationThreshold = 0.5;
-
 const opacity = 1;
 const flipHorizontal = true;
 const maskBlurAmount = 0;
 
-let localStream;
-let net;
-let videoElement;
+const hiddenCanvas1 = document.createElement("canvas");
+const hiddenCanvas2 = document.createElement("canvas");
+const hiddenCanvas3 = document.createElement("canvas");
+const hiddenCanvas4 = document.createElement("canvas");
 
 const canvases = {
 	c1: document.getElementById('c1'),
@@ -18,7 +16,7 @@ const canvases = {
 	c4: document.getElementById('c4'),
 	c5: document.getElementById('c5'),
 	c6: document.getElementById('c6')
-}
+};
 
 const videos = {
 	v1: document.getElementById('v1'),
@@ -27,19 +25,69 @@ const videos = {
 	v4: document.getElementById('v4'),
 	v5: document.getElementById('v5'),
 	v6: document.getElementById('v6')
+};
+
+let localStream;
+let net;
+let videoElement;
+
+// NOTE: -----> Startup <-----
+
+setTimeout(() => setup(), 2000);
+setTimeout(() => initStream(1, hiddenCanvas1), 3000);
+setTimeout(() => initStream(2, hiddenCanvas2), 4000);
+setTimeout(() => initStream(3, hiddenCanvas3), 5000);
+setTimeout(() => initStream(4, hiddenCanvas4), 6000);
+
+function setup() {
+	const uriStream1 = "ws://10.23.10.34:8080";
+	const uriStream2 = "ws://10.23.10.34:8080";
+	const uriStream3 = "ws://10.23.10.34:8080";
+	const uriStream4 = "ws://10.23.10.34:8080";
+
+	// WARN: TODO: What are args 3 and 4?
+	const wsavc1 = new WSAvcPlayer(hiddenCanvas1, "webgl", 1, 35);
+	const wsavc2 = new WSAvcPlayer(hiddenCanvas2, "webgl", 1, 35);
+	const wsavc3 = new WSAvcPlayer(hiddenCanvas3, "webgl", 1, 35);
+	const wsavc4 = new WSAvcPlayer(hiddenCanvas4, "webgl", 1, 35);
+
+	wsavc1.connect(uriStream1);
+	wsavc2.connect(uriStream2);
+	wsavc3.connect(uriStream3);
+	wsavc4.connect(uriStream4);
+
+	wsavc1.playStream();
+	wsavc2.playStream();
+	wsavc3.playStream();
+	wsavc4.playStream();
+
+	hiddenCanvas1.getContext('webgl');
+	hiddenCanvas2.getContext('webgl');
+	hiddenCanvas3.getContext('webgl');
+	hiddenCanvas4.getContext('webgl');
 }
 
-// -----> Create New Peer - Display <-----
+async function initStream(id, cvs) {
+	let remoteStream = cvs.captureStream();
 
-// const peer = new Peer('display', {
-// 	// host: "10.18.71.244",
-// 	host: "192.168.1.182",
-// 	// host: BASE_URL,
-// 	port: BASE_PORT,
-// 	path: '/api/peer'
-// });
+	let vid = videos["v" + id];
 
-// -----> Startup <-----
+	vid.srcObject = remoteStream;
+
+	await videoReady(vid);
+
+	bootstrapPart(vid, id);
+}
+
+function videoReady(vidEl) {
+	return new Promise((resolve) => {
+		vidEl.onloadedmetadata = () => {
+			vidEl.width = vidEl.videoWidth;
+			vidEl.height = vidEl.videoHeight;
+			resolve(vidEl);
+		};
+	});
+}
 
 async function bootstrapPart(vid, id) {
 	net = await bodyPix.load();
@@ -47,7 +95,7 @@ async function bootstrapPart(vid, id) {
 	runNet(vid, id);
 }
 
-// -----> ML Segmentation <-----
+// NOTE: -----> BodyPix Segmentation <-----
 
 async function runNet(vid, id) {
 	let segmentation = await newSegment(vid);
@@ -90,6 +138,7 @@ function whichColor(segmentation, id) {
 			return createMask(segmentation, BODY_COLORS['LEFT_LEG']);
 
 		default:
+			console.log("This is id was no good:", id)
 			return createMask(segmentation, BODY_COLORS['DEFAULT_COLORS']);
 	}
 }
@@ -98,59 +147,4 @@ function createMask(segmentation, colors) {
 	return bodyPix.toColoredPartMask(segmentation, colors);
 }
 
-// -----> Define Peer Events <-----
-
-// When receive a stream, display in 
-// peer.on('call', (call) => {
-// 	console.log("client connected:", call.peer)
-// 	call.answer();
-
-// 	call.on('stream', (remoteStream) => handleStream(remoteStream, call.peer));
-// 	call.on('close', () => console.log("closing stream from:", call.peer));
-// 	call.on('error', (err) => console.log(err));
-// });
-
-
-// var canvas1 = document.getElementById('c1')
-var canvas1 = document.createElement("canvas");
-var uri = "ws://10.23.10.34:8080"
-var wsavc = new WSAvcPlayer(canvas1, "webgl", 1, 35);
-wsavc.connect(uri);
-
-setTimeout(() => startit(), 2000);
-setTimeout(() => handleStream(1), 3000);
-setTimeout(() => handleStream(2), 4000);
-setTimeout(() => handleStream(3), 5000);
-
-function startit() {
-	wsavc.playStream();
-	// var ctx = canvas1.getContext('webgl');
-	canvas1.getContext('webgl');
-}
-
-async function handleStream(id) {
-// async function handleStream(remoteStream, id) {
-	// wsavc.playStream();
-	// // var ctx = canvas1.getContext('webgl');
-	// canvas1.getContext('webgl');
-	
-	var remoteStream = canvas1.captureStream();
-
-	let vid = videos["v"+id];
-
-	vid.srcObject = remoteStream;
-
-	await videoReady(vid);
-
-	bootstrapPart(vid, id);
-}
-
-function videoReady(vidEl) {
-	return new Promise((resolve) => {
-		vidEl.onloadedmetadata = () => {
-			vidEl.width = vidEl.videoWidth;
-			vidEl.height = vidEl.videoHeight;
-			resolve(vidEl);
-		};
-	});
-}
+// NOTE: -----> Change Streams - Web Sockets <-----

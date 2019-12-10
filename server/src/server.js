@@ -1,15 +1,13 @@
 'use strict'
-const bodyParser = require('body-parser');
 const express = require('express');
 const helmet = require('helmet');
-// const https = require('https');
-const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const logger = require('morgan');
-const peer = require('peer');
 const config = require('./config/config');
+const WebSocket = require('ws');
 
-// ----------> Create Config File For Clients <----------
+// NOTE: ----------> Create Config File For Clients <----------
 
 const toWrite = `
 	const BASE_URL = '${config.host}';
@@ -18,7 +16,7 @@ const toWrite = `
 fs.writeFileSync(__dirname + '/../public/display/js/env.js', toWrite)
 fs.writeFileSync(__dirname + '/../public/parts/js/env.js', toWrite)
 
-// ----------> Create HTTPS Server <----------
+// NOTE: ----------> Create HTTPS Server <----------
 
 const app = express();
 
@@ -30,26 +28,15 @@ const options = {
 	cert: cert
 };
 
-// const server = https.createServer(options, app);
-const server = http.createServer(app);;
+const server = https.createServer(options, app);
 
-// ----------> Set Middleware <----------
+// NOTE: ----------> Set Middleware <----------
 
+// TODO: Set for prod logs
 app.use(logger('common'));
 app.use(helmet());
-app.use(bodyParser.json());
 
-// ----------> Set Route for PeerJS API <----------
-
-const peerOptions = {
-	debug: false
-};
-
-const peerServer = peer.ExpressPeerServer(server, peerOptions);
-
-app.use('/api/peer', peerServer);
-
-// ----------> Set Static Routes <----------
+// NOTE: ----------> Set Static Routes <----------
 
 app.use(express.static('public'));
 
