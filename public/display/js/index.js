@@ -18,11 +18,10 @@ const canvases = {
 };
 
 const videos = {
-	v1: document.getElementById('v1'),
-	v2: document.getElementById('v2'),
-	v3: document.getElementById('v3'),
-	v4: document.getElementById('v4'),
-	v5: document.getElementById('v5')
+	stream1: document.getElementById('stream1'),
+	stream2: document.getElementById('stream2'),
+	stream3: document.getElementById('stream3'),
+	stream4: document.getElementById('stream4')
 };
 
 const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
@@ -31,13 +30,9 @@ let localStream;
 let net;
 let videoElement;
 
-// NOTE: -----> Startup <-----
+// NOTE: -----> Setup Streams <-----
 
-setTimeout(() => setup(), 2000);
-setTimeout(() => initStream(1, hiddenCanvas1), 3000);
-setTimeout(() => initStream(2, hiddenCanvas2), 4000);
-setTimeout(() => initStream(3, hiddenCanvas3), 5000);
-setTimeout(() => initStream(4, hiddenCanvas4), 6000);
+setup();
 
 function setup() {
 	const uriStream1 = "ws://stream1.local:5050";
@@ -67,16 +62,23 @@ function setup() {
 	hiddenCanvas4.getContext('webgl');
 }
 
+// NOTE: -----> Start Streams (Bootstrap) <-----
+
+setTimeout(() => initStream(1, hiddenCanvas1), 2000);
+setTimeout(() => initStream(2, hiddenCanvas2), 3000);
+setTimeout(() => initStream(3, hiddenCanvas3), 4000);
+setTimeout(() => initStream(4, hiddenCanvas4), 5000);
+
 async function initStream(id, cvs) {
 	let remoteStream = cvs.captureStream();
 
-	let vid = videos["v" + id];
+	let vid = videos["stream" + id];
 
 	vid.srcObject = remoteStream;
 
 	await videoReady(vid);
 
-	bootstrapPart(vid, id);
+	bootstrap(vid, id);
 }
 
 function videoReady(vidEl) {
@@ -89,7 +91,7 @@ function videoReady(vidEl) {
 	});
 }
 
-async function bootstrapPart(vid, id) {
+async function bootstrap(vid, id) {
 	net = await bodyPix.load();
 
 	runNet(vid, id);

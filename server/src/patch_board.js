@@ -6,10 +6,15 @@ const startPatchBoard = (wss) => {
 	let startTickArms;
 	let startTickLegs;
 
-	let displayStateHead;
-	let displayStateTorso;
-	let displayStateArms;
-	let displayStateLegs;
+	let noiseCheck1 = 0;
+	let noiseCheck2 = 0;
+	let noiseCheck3 = 0;
+	let noiseCheck4 = 0;
+
+	let stream1State = "head";
+	let stream2State = "torso";
+	let stream3State = "arms";
+	let stream4State = "legs";
 
 	// NOTE: -----> Set GPIO Pins <-----
 
@@ -51,6 +56,66 @@ const startPatchBoard = (wss) => {
 
 	// NOTE: -----> Patch Board - Alert Actions <-----
 
+	const determineStream = (x, partName) => {
+		if ( 15 < x < 35 ) {
+			noiseCheck1++
+			noiseCheck1++
+			if (stream1State != partName && noiseCheck1 == 3) {
+				sendToClient("stream1", partName);
+				console.log("Stream 1 is now being sent to:", partName)
+
+				noiseCheck1 = 0
+				stream1State = partName;
+			}
+			return;
+		}
+
+		if ( 40 < x < 60 ) {
+			noiseCheck2++
+			if (stream2State != partName && noiseCheck2 == 3) {
+				sendToClient("stream2", partName);
+				console.log("Stream 2 is now being sent to:", partName)
+
+				noiseCheck2 = 0
+				stream2State = partName;
+			}
+			return;
+		}
+
+		if ( 65 < x < 85 ) {
+			noiseCheck3++
+			if (stream3State != partName && noiseCheck3 == 3) {
+				sendToClient("stream3", partName);
+				console.log("Stream 3 is now being sent to:", partName)
+
+				noiseCheck3 = 0
+				stream3State = partName;
+			}
+			return;
+		}
+
+		if ( 90 < x < 110) {
+			noiseCheck4++
+			if (stream4State != partName && noiseCheck4 == 3) {
+				sendToClient("stream4", partName);
+				console.log("Stream 4 is now being sent to:", partName)
+
+				noiseCheck4 = 0
+				stream4State = partName;
+			}
+			return;
+		}
+	}
+
+	const sendToClient = (streamName, partName) => {
+		const data = {
+			streamName,
+			partName
+		}
+
+		wss.send(data);
+	}
+
 	const setAlert = (part, partTick) => {
 		part.on('alert', (level, tick) => {
 			if (level == 1) {
@@ -59,20 +124,15 @@ const startPatchBoard = (wss) => {
 				const endTick = tick;
 				const diff = (endTick >> 0) - (partTick >> 0); // Unsigned 32 bit arithmetic
 
-				if (diff < 150) {
-					console.log(`${part}`, diff);
-
-					// TODO: Fn to handle which action is taken
-					ws.send(part);
-				}
+				if (diff <= 110) determineStream(diff, partName);
 			}
 		});
 	}
 
-	setAlert(head, startTickHead)
-	setAlert(torso, startTickTorso)
-	setAlert(arms, startTickArms)
-	setAlert(legs, startTickLegs)
+	setAlert(head, startTickHead, "head");
+	setAlert(torso, startTickTorso, "torso");
+	setAlert(arms, startTickArms, "arms");
+	setAlert(legs, startTickLegs, "legs");
 
 	// NOTE: -----> Start Writing Writing To GPIO <-----
 
@@ -82,7 +142,7 @@ const startPatchBoard = (wss) => {
 		display2.trigger(50, 1);
 		display3.trigger(75, 1);
 		display4.trigger(100, 1);
-	}, 500);
+	}, 250);
 
 }
 
