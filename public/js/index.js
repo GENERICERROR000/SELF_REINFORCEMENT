@@ -80,8 +80,8 @@ async function getStream(uri, cvs) {
 
 setTimeout(() => {
 	ready = true
-	loadStreams("stream2", hiddenCanvas_4)
-}, 5000);
+	loadStreams("stream2", hiddenCanvas_2)
+}, 2000);
 
 async function loadStreams(id, cvs) {
 	let remoteStream = cvs.captureStream();
@@ -183,7 +183,7 @@ function createMask(segmentation, colors) {
 
 // NOTE: -----> Web Socket actions <-----
 
-const ws = new WebSocket(wsUrl);
+let ws = new WebSocket(wsUrl);
 
 ws.onerror = function () {
 	console.log("Fox - that's one of ours!");
