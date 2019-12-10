@@ -49,39 +49,63 @@ function setup() {
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
-	// TODO: Use service worker version: https://github.com/131/h264-live-player/blob/master/public/index_ww.html
-	const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
-	const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
-	const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
-	const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
+	getStream(uriStream_1, hiddenCanvas_1);
+	getStream(uriStream_2, hiddenCanvas_2);
+	getStream(uriStream_3, hiddenCanvas_3);
+	getStream(uriStream_4, hiddenCanvas_4);
 
-	wsavc_1.connect(uriStream_1);
-	wsavc_2.connect(uriStream_2);
-	wsavc_3.connect(uriStream_3);
-	wsavc_4.connect(uriStream_4);
+	// const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
+	// const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
+	// const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
+	// const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
 
-	wsavc_1.playStream();
-	wsavc_2.playStream();
-	wsavc_3.playStream();
-	wsavc_4.playStream();
+	// wsavc_1.connect(uriStream_1);
+	// wsavc_2.connect(uriStream_2);
+	// wsavc_3.connect(uriStream_3);
+	// wsavc_4.connect(uriStream_4);
 
-	hiddenCanvas_1.getContext('webgl');
-	hiddenCanvas_2.getContext('webgl');
-	hiddenCanvas_3.getContext('webgl');
-	hiddenCanvas_4.getContext('webgl');
+	// wsavc_1.playStream();
+	// wsavc_2.playStream();
+	// wsavc_3.playStream();
+	// wsavc_4.playStream();
+
+	// hiddenCanvas_1.getContext('webgl');
+	// hiddenCanvas_2.getContext('webgl');
+	// hiddenCanvas_3.getContext('webgl');
+	// hiddenCanvas_4.getContext('webgl');
+}
+function getStream(cvs, uri) {
+	const ww = new Worker('lib/http-live-player-worker.js');
+	const ofc = cvs.transferControlToOffscreen()
+
+	ww.postMessage({
+		cmd: 'init',
+		canvas: ofc
+	}, [ofc]);
+
+	ww.postMessage({
+		cmd: 'connect',
+		url: uri
+	});
+
+	ww.postMessage({
+		cmd: 'play'
+	});
+
+	cvs.getContext('webgl')
 }
 
 // NOTE: -----> Start Streams (Bootstrap) <-----
 
-setTimeout(() => initStream(1, hiddenCanvas_1), 2000);
-setTimeout(() => initStream(2, hiddenCanvas_2), 3000);
-setTimeout(() => initStream(3, hiddenCanvas_3), 4000);
+setTimeout(() => loadStreams(1, hiddenCanvas_1), 2000);
+setTimeout(() => loadStreams(2, hiddenCanvas_2), 3000);
+setTimeout(() => loadStreams(3, hiddenCanvas_3), 4000);
 setTimeout(() => {
-		initStream(4, hiddenCanvas_4)
+		loadStreams(4, hiddenCanvas_4)
 	}
 , 5000);
 
-async function initStream(id, cvs) {
+async function loadStreams(id, cvs) {
 	let remoteStream = cvs.captureStream();
 
 	let vid = videos["stream" + id];
@@ -192,7 +216,7 @@ ws.onopen = function () {
 };
 
 ws.onclose = function () {
-	console.log("The hatches are closing!");
+	console.log("The hatches are closed!");
 	ws = null;
 };
 
