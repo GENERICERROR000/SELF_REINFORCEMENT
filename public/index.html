@@ -3,13 +3,53 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>WORKING</title>
+	<title>SELF REINFORCEMENT</title>
+
 </head>
 
 <body>
-	<h1>
-		IT'S FUCKING WORKING
-	</h1>
+	<div id="container">
+		<div id="display-top">
+
+		</div>
+		<video id="steam1" autoplay style="width:200px;-webkit-transform:scaleX(-1);transform:scaleX(-1);"></video>
+		<h4 style="font-family:monaco;font-size: 14px;">STREAM 1</h4>
+		<video id="steam2" autoplay style="width:200px;-webkit-transform:scaleX(-1);transform:scaleX(-1);"></video>
+		<h4 style="font-family:monaco;font-size: 14px;">STREAM 2</h4>
+
+		<div 
+			id="body"
+			style="
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+				width: 50%;
+			"
+		>
+			<canvas id="head" style="width: 400px;"></canvas>
+			<div>
+				<canvas id="torso" style="width: 400px;display:inline-block;"></canvas>
+				<canvas id="right-arm" style="width: 400px;display:inline-block;"></canvas>
+				<canvas id="left-arm" style="width: 400px;display:inline-block;"></canvas>
+			</div>
+			<canvas id="legs" style="width: 400px;"></canvas>
+		</div>
+
+		<div id="display-bottom">
+			<h4 style="font-family:monaco;font-size: 14px;">STREAM 4</h4>
+			<video id="steam3" autoplay style="width:200px;-webkit-transform:scaleX(-1);transform:scaleX(-1);"></video> 3
+			<h4 style="font-family:monaco;font-size: 14px;">STREAM 4</h4>
+			<video id="steam4" autoplay style="width:200px;-webkit-transform:scaleX(-1);transform:scaleX(-1);"></video> 4
+		</div>
+	</div>
+
+	<script src="lib/tfjs1-2.js"></script>
+	<script src="lib/custom-bodypix.js"></script>
+	<script src="lib/http-live-player.js"></script>
+
+	<script src="js/env.js"></script>
+	<script src="js/part_colors.js"></script>
+	<script src="js/index.js"></script>
 </body>
 
 </html>

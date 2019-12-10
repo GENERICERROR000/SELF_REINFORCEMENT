@@ -9,7 +9,6 @@ const WebSocket = require('ws');
 
 // NOTE: -----> Create Config File For Client <-----
 
-// TODO: Do I still need env.js
 const toWrite = `
 	const BASE_URL = '${config.host}';
 	const BASE_PORT = '${config.port}';
@@ -33,19 +32,12 @@ const server = https.createServer(options, app);
 // NOTE: -----> Set Middleware <-----
 
 // TODO: Set for prod logs
+// app.use(logger('combined'));
 app.use(logger('common'));
 app.use(helmet());
 
-// NOTE: -----> Set Static Routes <-----
+// NOTE: -----> Set Static Directory <-----
 
 app.use(express.static('public'));
-
-app.use('/display', (req, res, next) => {
-	express.static('public/display')(req, res, next);
-});
-
-app.use('/parts', (req, res, next) => {
-	express.static('public/parts')(req, res, next);
-});
 
 module.exports = server;
