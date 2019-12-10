@@ -24,23 +24,17 @@ const videos = {
 	stream4: document.getElementById('stream4')
 };
 
-// const state = {
-// 	stream1: "head",
-// 	stream2: "torso",
-// 	stream3: "arms",
-// 	stream4: "legs"
-// };
-
 const state = {
-	"head": "stream1",
-	"torso": "stream2",
-	"rightArm": "stream3",
-	"leftArm": "stream3",
-	"legs": "stream4"
+	head: "stream1",
+	torso: "stream2",
+	rightArm: "stream3",
+	leftArm: "stream3",
+	legs: "stream4"
 };
 
 const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
 
+let ready = false
 let localStream;
 let net;
 let videoElement;
@@ -50,12 +44,12 @@ let videoElement;
 setup();
 
 function setup() {
-	const uriStream_1 = "ws://stream1.local:5050";
-	const uriStream_2 = "ws://stream2.local:5050";
-	const uriStream_3 = "ws://stream3.local:5050";
-	const uriStream_4 = "ws://stream4.local:5050";
+	const uriStream_1 = "ws://stream1.local:8080";
+	const uriStream_2 = "ws://stream2.local:8080";
+	const uriStream_3 = "ws://stream3.local:8080";
+	const uriStream_4 = "ws://stream4.local:8080";
 
-	// WARN: TODO: What are args 3 and 4?
+	// TODO: Use service worker version: https://github.com/131/h264-live-player/blob/master/public/index_ww.html
 	const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
 	const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
 	const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
@@ -82,7 +76,10 @@ function setup() {
 setTimeout(() => initStream(1, hiddenCanvas_1), 2000);
 setTimeout(() => initStream(2, hiddenCanvas_2), 3000);
 setTimeout(() => initStream(3, hiddenCanvas_3), 4000);
-setTimeout(() => initStream(4, hiddenCanvas_4), 5000);
+setTimeout(() => {
+		initStream(4, hiddenCanvas_4)
+	}
+, 5000);
 
 async function initStream(id, cvs) {
 	let remoteStream = cvs.captureStream();
@@ -93,7 +90,11 @@ async function initStream(id, cvs) {
 
 	await videoReady(vid);
 
-	bootstrap(vid, id);
+	net = await bodyPix.load();
+
+	if (ready) {
+		bootstrap();
+	}
 }
 
 function videoReady(vidEl) {
@@ -106,20 +107,27 @@ function videoReady(vidEl) {
 	});
 }
 
-async function bootstrap(vid, id) {
+async function bootstrap() {
 	net = await bodyPix.load();
 
-	runNet(vid, id);
+	runNet("head");
+	runNet("torso");
+	runNet("rightArm");
+	runNet("leftArm");
+	runNet("legs");
 }
 
 // NOTE: -----> BodyPix Segmentation <-----
 
-async function runNet(vid, id) {
+async function runNet(part) {
+	let whichStream = state[part]
+	let vid = videos[whichStream]
+
 	let segmentation = await newSegment(vid);
 
-	renderSegment(segmentation, vid, id);
+	renderSegment(segmentation, vid, part);
 
-	runNet(vid, id);
+	runNet(part);
 }
 
 async function newSegment(vid) {
@@ -128,70 +136,41 @@ async function newSegment(vid) {
 	return newSegmentation;
 }
 
-function renderSegment(segmentation, vid, id) {
-	let coloredPartImage = whichColor(segmentation, id);
+function renderSegment(segmentation, vid, part) {
+	let selectedPart = whichPart(segmentation, part);
 
-	let c = selectCanvas(id);
-
-	bodyPix.drawMask(c, vid, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
+	bodyPix.drawMask(selectedPart.cvs, vid, selectedPart.mask, opacity, maskBlurAmount, flipHorizontal);
 }
 
-function selectCanvas(id) {
-	let s = "stream" + id
-
-	const state = {
-		"head": "stream1",
-		"torso": "stream2",
-		"rightArm": "stream3",
-		"leftArm": "stream3",
-		"legs": "stream4"
-	};
-
-	switch (id) {
-		case 1:
-			return canvases.head;
-
-		case 2:
-			return canvases.torso;
-
-		case 3:
-			return canvases.;
-
-		case 4:
-			return canvases.;
-
+function whichPart(segmentation, part) {
+	switch (part) {
+		case "head":
+			return {
+				mask: createMask(segmentation, BODY_COLORS['HEAD']),
+				cvs: canvases[part]
+			};
+		case "torso":
+			return {
+				mask: createMask(segmentation, BODY_COLORS['TORSO']),
+				cvs: canvases[part]
+			};
+		case "rightArm":
+			return {
+				mask: createMask(segmentation, BODY_COLORS['RIGHT_ARM']),
+				cvs: canvases[part]
+			};
+		case "leftArm":
+			return {
+				mask: createMask(segmentation, BODY_COLORS['LEFT_ARM']),
+				cvs: canvases[part]
+			};
+		case "legs":
+			return {
+				mask: createMask(segmentation, BODY_COLORS['LEGS']),
+				cvs: canvases[part]
+			};
 		default:
-			console.log("Not a valid id");
-			return state["stream1"];
-	}
-}
-
-// WARN: This does not work - needs to return the mask. need to figure out above and below - using state so sockets can cause change
-// - What's going on is the id is tied to vid and cvs, so no way to change within the loop
-// - Somehow set outside of loop, and have fn in loop ref it (a state...)
-
-function whichColor(segmentation, id) {
-	switch (id) {
-		case 1:
-			createMask(segmentation, BODY_COLORS['HEAD']);
-			return;
-
-		case 2:
-			createMask(segmentation, BODY_COLORS['TORSO']);
-			return;
-
-		case 3:
-			createMask(segmentation, BODY_COLORS['RIGHT_ARM']);
-			createMask(segmentation, BODY_COLORS['LEFT_ARM']);
-			return;
-
-		case 4:
-			createMask(segmentation, BODY_COLORS['LEGS']);
-			return;
-
-		default:
-			console.log("This is id was no good:", id)
-			createMask(segmentation, BODY_COLORS['DEFAULT_COLORS']);
+			console.log("Something went wrong picking a part")
 			return;
 	}
 }
@@ -217,7 +196,6 @@ ws.onclose = function () {
 	ws = null;
 };
 
-// TODO: Handle message from server/patch board
 ws.onmessage = function (event) {
 	const { streamName, partName } = JSON.parse(event.data);
 	
@@ -225,6 +203,24 @@ ws.onmessage = function (event) {
 };
 
 const handleMessage = (streamName, partName) => {
-	console.log(`Stream "${streamName}" has been `)
-	state[streamName] = partName
+	console.log(`Stream "${streamName}" has been sent to ${partName}`)
+
+	switch (partName) {
+		case "head":	
+			state.head = streamName;
+			return;
+		case "torso":	
+			state.torso = streamName;
+			return;
+		case "arms":	
+			state.rightArm = streamName;
+			state.leftArm = streamName;
+			return;
+		case "legs":	
+			state.legs = streamName;
+			return;
+		default:
+			console.log("Patch Board asked for an invalid change")
+			return;
+	}
 }
