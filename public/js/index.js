@@ -5,10 +5,14 @@ const flipHorizontal = true;
 const maskBlurAmount = 0;
 
 const hiddenCanvas_1 = document.createElement("canvas");
-// const hiddenCanvas_2 = document.createElement("canvas");
-const hiddenCanvas_2 = document.getElementById("legs");
+const hiddenCanvas_2 = document.createElement("canvas");
 const hiddenCanvas_3 = document.createElement("canvas");
 const hiddenCanvas_4 = document.createElement("canvas");
+
+hiddenCanvas_1.getContext('webgl');
+hiddenCanvas_2.getContext('webgl');
+hiddenCanvas_3.getContext('webgl');
+hiddenCanvas_4.getContext('webgl');
 
 const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
 const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
@@ -80,8 +84,6 @@ function getStream(uri, wsavc) {
 	wsavc.connect(uri);
 
 	wsavc.playStream();
-
-	cvs.getContext('webgl');
 }
 
 
