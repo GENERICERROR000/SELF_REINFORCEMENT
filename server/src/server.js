@@ -1,7 +1,7 @@
 'use strict'
 const express = require('express');
 const helmet = require('helmet');
-const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const logger = require('morgan');
 const config = require('../config/config');
@@ -15,19 +15,14 @@ const toWrite = `
 `
 fs.writeFileSync(__dirname + '/../../public/js/env.js', toWrite)
 
-// NOTE: -----> Create HTTPS Server <-----
+// NOTE: -----> Create HTTP Server <-----
 
 const app = express();
 
 const key = fs.readFileSync(__dirname + '/../../certs/selfsigned.key');
 const cert = fs.readFileSync(__dirname + '/../../certs/selfsigned.crt');
 
-const options = {
-	key: key,
-	cert: cert
-};
-
-const server = https.createServer(options, app);
+const server = http.createServer(app);
 
 // NOTE: -----> Set Middleware <-----
 
