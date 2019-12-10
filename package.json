@@ -4,7 +4,7 @@
     "description": "Repo for SELF REINFORCEMENT server, patch board controller, and client.",
     "main": "index.js",
     "scripts": {
-        "start": "PORT='5050' HOST='127.0.0.1' node index.js",
+        "start": "HOST='patchboard.local' PORT='5050' node index.js",
         "clean": "rm -rf node_modules yarn.lock package-lock.json"
     },
     "author": "Noah Kernis -//-",
