@@ -54,10 +54,11 @@ function setup() {
 	// getStream(uriStream_3, hiddenCanvas_3);
 	// getStream(uriStream_4, hiddenCanvas_4);
 }
-function getStream(uri, cvs) {
+
+async function getStream(uri, cvs) {
 	const wsavc = new WSAvcPlayer(cvs, "webgl", 1, 35);
 
-	wsavc.connect(uri);
+	await wsavc.connect(uri);
 
 	wsavc.playStream();
 
