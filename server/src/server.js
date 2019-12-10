@@ -13,7 +13,7 @@ const toWrite = `
 	const BASE_URL = '${config.host}';
 	const BASE_PORT = '${config.port}';
 `
-fs.writeFileSync(__dirname + '/../../public/display/js/env.js', toWrite)
+fs.writeFileSync(__dirname + '/../../public/js/env.js', toWrite)
 
 // NOTE: -----> Create HTTPS Server <-----
 
