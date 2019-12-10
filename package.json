@@ -1,7 +1,7 @@
 {
     "name": "self_reinforcement",
     "version": "0.0.0",
-    "description": "Repo for SELF REINFORCEMENT server and clientd.",
+    "description": "Repo for SELF REINFORCEMENT server, patch board contoller, and client.",
     "main": "index.js",
     "scripts": {
         "start": "PORT='3000' HOST='127.0.0.1' node index.js",
@@ -13,6 +13,7 @@
         "express": "^4.17.1",
         "helmet": "^3.21.2",
         "morgan": "^1.9.1",
-        "pigpio": "^2.0.1"
+        "pigpio": "^2.0.1",
+        "ws": "^7.2.0"
     }
 }

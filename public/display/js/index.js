@@ -14,8 +14,7 @@ const canvases = {
 	c2: document.getElementById('c2'),
 	c3: document.getElementById('c3'),
 	c4: document.getElementById('c4'),
-	c5: document.getElementById('c5'),
-	c6: document.getElementById('c6')
+	c5: document.getElementById('c5')
 };
 
 const videos = {
@@ -23,9 +22,10 @@ const videos = {
 	v2: document.getElementById('v2'),
 	v3: document.getElementById('v3'),
 	v4: document.getElementById('v4'),
-	v5: document.getElementById('v5'),
-	v6: document.getElementById('v6')
+	v5: document.getElementById('v5')
 };
+
+const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
 
 let localStream;
 let net;
@@ -40,10 +40,10 @@ setTimeout(() => initStream(3, hiddenCanvas3), 5000);
 setTimeout(() => initStream(4, hiddenCanvas4), 6000);
 
 function setup() {
-	const uriStream1 = "ws://10.23.10.34:8080";
-	const uriStream2 = "ws://10.23.10.34:8080";
-	const uriStream3 = "ws://10.23.10.34:8080";
-	const uriStream4 = "ws://10.23.10.34:8080";
+	const uriStream1 = "ws://stream1.local:5050";
+	const uriStream2 = "ws://stream2.local:5050";
+	const uriStream3 = "ws://stream3.local:5050";
+	const uriStream4 = "ws://stream4.local:5050";
 
 	// WARN: TODO: What are args 3 and 4?
 	const wsavc1 = new WSAvcPlayer(hiddenCanvas1, "webgl", 1, 35);
@@ -117,6 +117,7 @@ function renderSegment(segmentation, vid, id) {
 	bodyPix.drawMask(canvases["c"+id], vid, coloredPartImage, opacity, maskBlurAmount, flipHorizontal);
 }
 
+// WARN: TODO: Fix colors to be correct!!!
 function whichColor(segmentation, id) {
 	switch (id) {
 		case 1:
@@ -127,14 +128,10 @@ function whichColor(segmentation, id) {
 
 		case 3:
 			return createMask(segmentation, BODY_COLORS['RIGHT_ARM']);
-
-		case 4:
 			return createMask(segmentation, BODY_COLORS['LEFT_ARM']);
 
-		case 5:
+		case 4:
 			return createMask(segmentation, BODY_COLORS['RIGHT_LEG']);
-
-		case 6:
 			return createMask(segmentation, BODY_COLORS['LEFT_LEG']);
 
 		default:
@@ -147,4 +144,25 @@ function createMask(segmentation, colors) {
 	return bodyPix.toColoredPartMask(segmentation, colors);
 }
 
-// NOTE: -----> Change Streams - Web Sockets <-----
+// NOTE: -----> Web Socket actions <-----
+
+const ws = new WebSocket(wsUrl);
+
+ws.onerror = function () {
+	console.log("Fox - that's one of ours!");
+};
+
+ws.onopen = function () {
+	console.log("The hatches are open!")
+};
+
+ws.onclose = function () {
+	console.log("The hatches are closing!")
+	ws = null;
+};
+
+ws.onmessage = function (event) {
+	const data = JSON.parse(event.data);
+	
+	
+};
