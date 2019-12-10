@@ -167,6 +167,8 @@ function selectCanvas(id) {
 }
 
 // WARN: This does not work - needs to return the mask. need to figure out above and below - using state so sockets can cause change
+// - What's going on is the id is tied to vid and cvs, so no way to change within the loop
+// - Somehow set outside of loop, and have fn in loop ref it (a state...)
 
 function whichColor(segmentation, id) {
 	switch (id) {
@@ -215,6 +217,7 @@ ws.onclose = function () {
 	ws = null;
 };
 
+// TODO: Handle message from server/patch board
 ws.onmessage = function (event) {
 	const { streamName, partName } = JSON.parse(event.data);
 	
