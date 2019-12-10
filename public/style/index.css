@@ -1,0 +1,41 @@
+#container {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+}
+
+.streams {
+	width:200px;
+	-webkit-transform:scaleX(-1);
+	transform:scaleX(-1);
+}
+
+.stream-name {
+	font-family:monaco;
+	font-size: 14px;
+}
+
+#body {
+
+}
+
+#head {
+	width: 400px;
+}
+
+#torso {
+	width: 400px;
+	display:inline-block;
+}
+#right-arm {
+	width: 400px;
+	display:inline-block;
+}
+#left-arm {
+	width: 400px;
+	display:inline-block;
+}
+#legs {
+	width: 400px;
+}
