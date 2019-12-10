@@ -64,26 +64,28 @@ setTimeout(() => setup(), 1000);
 setTimeout(() => {
 	ready = true
 	loadStreams("stream2", hiddenCanvas_2)
-}, 2000);
+}, 5000);
 
 // NOTE: -----> Setup Streams <-----
 
-function setup() {
+async function setup() {
 	const uriStream_1 = "ws://stream1.local:8080";
 	const uriStream_2 = "ws://stream2.local:8080";
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
 	// getStream(uriStream_1, wsavc_1);
-	getStream(uriStream_2, wsavc_2);
+	await getStream(uriStream_2, wsavc_2);
 	// getStream(uriStream_3, wsavc_3);
 	// getStream(uriStream_4, wsavc_4);
 }
 
 function getStream(uri, wsavc) {
-	wsavc.connect(uri);
-
-	wsavc.playStream();
+	return new Promise((resolve) => {
+		wsavc.connect(uri);
+		wsavc.playStream();
+		resolve();
+	});
 }
 
 
