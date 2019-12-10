@@ -5,7 +5,8 @@ const flipHorizontal = true;
 const maskBlurAmount = 0;
 
 const hiddenCanvas_1 = document.createElement("canvas");
-const hiddenCanvas_2 = document.createElement("canvas");
+// const hiddenCanvas_2 = document.createElement("canvas");
+const hiddenCanvas_2 = document.getElementById("legs");
 const hiddenCanvas_3 = document.createElement("canvas");
 const hiddenCanvas_4 = document.createElement("canvas");
 
