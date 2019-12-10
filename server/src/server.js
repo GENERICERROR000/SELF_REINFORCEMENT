@@ -5,7 +5,6 @@ const http = require('http');
 const fs = require('fs');
 const logger = require('morgan');
 const config = require('../config/config');
-const WebSocket = require('ws');
 
 // NOTE: -----> Create Config File For Client <-----
 

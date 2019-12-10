@@ -1,4 +1,5 @@
 'use strict'
+const WebSocket = require('ws');
 const port = require('./server/config/config').port
 const server = require('./server/src/server')
 const startPatchBoard = require('./server/src/patch_board')
