@@ -19,16 +19,13 @@ fs.writeFileSync(__dirname + '/../../public/js/env.js', toWrite)
 
 const app = express();
 
-const key = fs.readFileSync(__dirname + '/../../certs/selfsigned.key');
-const cert = fs.readFileSync(__dirname + '/../../certs/selfsigned.crt');
-
 const server = http.createServer(app);
 
 // NOTE: -----> Set Middleware <-----
 
 // TODO: Set for prod logs
-// app.use(logger('combined'));
-app.use(logger('common'));
+app.use(logger('combined'));
+// app.use(logger('common'));
 app.use(helmet());
 
 // NOTE: -----> Set Static Directory <-----
