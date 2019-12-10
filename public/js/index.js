@@ -47,18 +47,18 @@ let videoElement;
 // NOTE: -----> Setup System <-----
 
 setTimeout(() => setup(), 1000);
-// setTimeout(() => loadStreams("stream1", wsavc_1), 2000);
-// setTimeout(() => loadStreams("stream2", wsavc_2), 3000);
-// setTimeout(() => loadStreams("stream3", wsavc_3), 4000);
+// setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 2000);
+// setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 3000);
+// setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 4000);
 // setTimeout(() => {
 // 		ready = true
-// 		loadStreams("stream4", wsavc_4)
+// 		loadStreams("stream4", hiddenCanvas_4)
 // 	}
 // , 5000);
 
 setTimeout(() => {
 	ready = true
-	loadStreams("stream2", wsavc_2)
+	loadStreams("stream2", hiddenCanvas_2)
 }, 2000);
 
 // NOTE: -----> Setup Streams <-----
