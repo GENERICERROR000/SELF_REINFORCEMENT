@@ -28,6 +28,7 @@
 }
 
 .stream-container {
+	max-width: 100%;
 	font-family: monaco;
 	font-size: 14px;
 	text-align: center;
