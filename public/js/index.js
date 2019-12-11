@@ -63,7 +63,7 @@ setTimeout(() => {
 		ready = true
 		loadStreams("stream2", hiddenCanvas_2)
 	}
-, 20000);
+, 10000);
 
 // setTimeout(() => {
 // 	ready = true;
