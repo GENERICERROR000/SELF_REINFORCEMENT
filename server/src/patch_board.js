@@ -97,7 +97,7 @@ const startPatchBoard = (ws) => {
 				noiseCheck2++;
 
 				if (stream2State != partName && noiseCheck2 == 3) {
-					sendToClient("stream1", partName);
+					sendToClient("stream2", partName);
 
 					console.log("");
 					console.log("----------------------------------------");
