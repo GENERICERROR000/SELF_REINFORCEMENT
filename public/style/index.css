@@ -7,19 +7,19 @@
 
 
 #stream1 {
-	border-style: none solid solid none;
+	border-style: solid none none solid;
 }
 
 #stream2 {
-	border-style: none none solid solid;
-}
-
-#stream3 {
 	border-style: solid solid none none;
 }
 
+#stream3 {
+	border-style: none none solid solid;
+}
+
 #stream4 {
-	border-style: solid none none solid;
+	border-style: none solid solid none;
 }
 
 .streams {
