@@ -5,18 +5,27 @@
 	border-width: 3px;
 }
 
-.grid-item {
 
+#stream1 {
+	border-style: none solid solid none;
 }
 
-.box {
-	border-style: solid;
-	border-width: 3px;
+#stream2 {
+	border-style: none none solid solid;
+}
+
+#stream3 {
+	border-style: solid solid none none;
+}
+
+#stream4 {
+	border-style: solid none none solid;
 }
 
 .streams {
 	-webkit-transform:scaleX(-1);
 	transform:scaleX(-1);
+	border-width: 4px;
 }
 
 .stream-name {
