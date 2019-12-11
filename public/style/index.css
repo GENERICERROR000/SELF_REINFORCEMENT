@@ -1,28 +1,25 @@
-/* #container {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	width: 50%;
+#container {
+	display: grid;
+	grid-template-columns: 30vw 40vw 30vm;
+}
+
+.grid-item {
+
+}
+
+/* .streams {
+	width:300px;
+	-webkit-transform:scaleX(-1);
+	transform:scaleX(-1);
 	border-style: solid;
 	border-width: 3px;
 } */
-
-.streams {
-	width:300px;
-	/* -webkit-transform:scaleX(-1);
-	transform:scaleX(-1);
-	border-style: solid;
-	border-width: 3px; */
-}
 
 .stream-name {
 	font-family: monaco;
 	font-size: 14px;
 }
 
-/* #body {
-
-} */
 
 #head {
 	width: 400px;
