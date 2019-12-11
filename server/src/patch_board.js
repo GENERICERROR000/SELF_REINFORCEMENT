@@ -22,10 +22,10 @@ const startPatchBoard = (ws) => {
 	let prevSignal3 = 0;
 	let prevSignal4 = 0;
 
-	let stream1State = "head";
-	let stream2State = "torso";
-	let stream3State = "arms";
-	let stream4State = "legs";
+	let stream1State = '';
+	let stream2State = '';
+	let stream3State = '';
+	let stream4State = '';
 
 	// NOTE: -----> Set GPIO Pins <-----
 
