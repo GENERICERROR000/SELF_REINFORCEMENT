@@ -1,7 +1,10 @@
 const Gpio = require('pigpio').Gpio;
 
 const startPatchBoard = (wss) => {
-	console.log("Srtating Patch Board...")
+	console.log("")
+	console.log("########################")
+	console.log("# Starting Patch Board #")
+	console.log("########################")
 	console.log("")
 
 	let startTickHead;
@@ -61,51 +64,70 @@ const startPatchBoard = (wss) => {
 
 	const determineStream = (x, partName) => {
 		if ( 15 < x < 35 ) {
-			noiseCheck1++
-			noiseCheck1++
+			noiseCheck1++;
+
 			if (stream1State != partName && noiseCheck1 == 3) {
 				sendToClient("stream1", partName);
-				console.log("Stream 1 is now being sent to:", partName)
+				
+				console.log("");
+				console.log("------------------------------------------------");
+				console.log("Stream 1 is now being sent to:", partName);
 
-				noiseCheck1 = 0
+				noiseCheck1 = 0;
 				stream1State = partName;
 			}
+
 			return;
 		}
 
 		if ( 40 < x < 60 ) {
-			noiseCheck2++
+			noiseCheck2++;
+			
 			if (stream2State != partName && noiseCheck2 == 3) {
 				sendToClient("stream2", partName);
-				console.log("Stream 2 is now being sent to:", partName)
+				
+				console.log("");
+				console.log("------------------------------------------------");
+				console.log("Stream 2 is now being sent to:", partName);
 
-				noiseCheck2 = 0
+				noiseCheck2 = 0;
 				stream2State = partName;
 			}
+			
 			return;
 		}
 
 		if ( 65 < x < 85 ) {
-			noiseCheck3++
+			noiseCheck3++;
+			
 			if (stream3State != partName && noiseCheck3 == 3) {
 				sendToClient("stream3", partName);
-				console.log("Stream 3 is now being sent to:", partName)
+				
+				console.log("");
+				console.log("------------------------------------------------");
+				console.log("Stream 3 is now being sent to:", partName);
 
-				noiseCheck3 = 0
+				noiseCheck3 = 0;
 				stream3State = partName;
 			}
+			
 			return;
 		}
 
 		if ( 90 < x < 110) {
-			noiseCheck4++
+			noiseCheck4++;
+			
 			if (stream4State != partName && noiseCheck4 == 3) {
 				sendToClient("stream4", partName);
-				console.log("Stream 4 is now being sent to:", partName)
+				c
+				onsole.log("");
+				console.log("------------------------------------------------");
+				console.log("Stream 4 is now being sent to:", partName);
 
-				noiseCheck4 = 0
+				noiseCheck4 = 0;
 				stream4State = partName;
 			}
+
 			return;
 		}
 	}
@@ -114,7 +136,7 @@ const startPatchBoard = (wss) => {
 		const data = {
 			streamName,
 			partName
-		}
+		};
 
 		wss.send(data);
 	}

@@ -32,12 +32,20 @@ const state = {
 	legs: "stream4"
 };
 
+const wsavcs = {
+	wsavc_1: {},
+	wsavc_2: {},
+	wsavc_3: {},
+	wsavc_4: {}
+}
+
 const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
 
 let ready = false;
 let localStream;
 let net;
 let videoElement;
+
 
 // NOTE: -----> Setup System <-----
 
@@ -53,42 +61,43 @@ setTimeout(() => setup(), 1000);
 
 setTimeout(() => {
 	ready = true;
-	loadStreams("stream2", hiddenCanvas_2);
+	loadStreams("stream1", hiddenCanvas_1);
 }, 3000);
 
 // NOTE: -----> Setup Streams <-----
 
-function setup() {
+async function setup() {
 	const uriStream_1 = "ws://stream1.local:8080";
 	const uriStream_2 = "ws://stream2.local:8080";
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
-	const wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
-	const wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
-	const wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
-	const wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
+	wsavcs.wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
+	// wsavcs.wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
+	// wsavcs.wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
+	// wsavcs.wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
 
-	wsavc_1.connect(uriStream_1);
-	wsavc_2.connect(uriStream_2);
-	wsavc_3.connect(uriStream_3);
-	wsavc_4.connect(uriStream_4);
-
-	wsavc1.playStream();
-	wsavc2.playStream();
-	wsavc3.playStream();
-	wsavc4.playStream();
+	wsavcs.wsavc_1.connect(uriStream_1);
+	// wsavcs.wsavc_2.connect(uriStream_2);
+	// wsavcs.wsavc_3.connect(uriStream_3);
+	// wsavcs.wsavc_4.connect(uriStream_4);
 
 	hiddenCanvas_1.getContext('webgl');
-	hiddenCanvas_2.getContext('webgl');
-	hiddenCanvas_3.getContext('webgl');
-	hiddenCanvas_4.getContext('webgl');
+	// hiddenCanvas_2.getContext('webgl');
+	// hiddenCanvas_3.getContext('webgl');
+	// hiddenCanvas_4.getContext('webgl');
+
+	net = await bodyPix.load();
 }
 
 
 // NOTE: -----> Start Streams (Bootstrap) <-----
 
 async function loadStreams(id, cvs) {
+	let w = "wsavc_" + id.charAt(id.length - 1)
+	
+	wsavcs[w].playStream();
+
 	let remoteStream = cvs.captureStream();
 
 	let vid = videos[id];
@@ -96,8 +105,6 @@ async function loadStreams(id, cvs) {
 	vid.srcObject = remoteStream;
 
 	await videoReady(vid);
-
-	net = await bodyPix.load();
 
 	if (ready) {
 		bootstrap();
@@ -186,22 +193,22 @@ function createMask(segmentation, colors) {
 
 // NOTE: -----> Web Socket actions <-----
 
-let ws = new WebSocket(wsUrl);
+let wsPatchBoard = new WebSocket(wsUrl);
 
-ws.onerror = function () {
+wsPatchBoard.onerror = function () {
 	console.log("Fox - that's one of ours!");
 };
 
-ws.onopen = function () {
+wsPatchBoard.onopen = function () {
 	console.log("The hatches are open!");
 };
 
-ws.onclose = function () {
+wsPatchBoard.onclose = function () {
 	console.log("The hatches are closed!");
-	ws = null;
+	wsPatchBoard = null;
 };
 
-ws.onmessage = function (event) {
+wsPatchBoard.onmessage = function (event) {
 	const { streamName, partName } = JSON.parse(event.data);
 	
 	handleMessage(streamName, partName);

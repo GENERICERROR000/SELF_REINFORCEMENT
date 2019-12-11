@@ -1,18 +1,18 @@
-#container {
+/* #container {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
 	width: 50%;
 	border-style: solid;
-	border-width: px;
-}
+	border-width: 3px;
+} */
 
 .streams {
-	width:200px;
+	width:300px;
 	-webkit-transform:scaleX(-1);
 	transform:scaleX(-1);
 	border-style: solid;
-	border-width: px;
+	border-width: 3px;
 }
 
 .stream-name {
