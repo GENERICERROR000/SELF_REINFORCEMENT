@@ -6,20 +6,20 @@
 }
 
 
-#stream1 {
-	border-style: solid none none solid;
+#box1 {
+	border-style: none solid solid none;
 }
 
-#stream2 {
-	border-style: solid solid none none;
-}
-
-#stream3 {
+#box2 {
 	border-style: none none solid solid;
 }
 
-#stream4 {
-	border-style: none solid solid none;
+#box3 {
+	border-style: solid solid none none;
+}
+
+#box4 {
+	border-style: solid none none solid;
 }
 
 .streams {
