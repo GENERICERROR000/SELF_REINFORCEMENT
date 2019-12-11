@@ -50,19 +50,25 @@ let videoElement;
 // NOTE: -----> Setup System <-----
 
 setTimeout(() => setup(), 1000);
-// setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 2000);
-// setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 3000);
-// setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 4000);
+setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 5000);
+// setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 10000);
+// setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 15000);
 // setTimeout(() => {
 // 		ready = true
 // 		loadStreams("stream4", hiddenCanvas_4)
 // 	}
-// , 5000);
+// , 20000);
 
 setTimeout(() => {
-	ready = true;
-	loadStreams("stream1", hiddenCanvas_1);
-}, 3000);
+		ready = true
+		loadStreams("stream2", hiddenCanvas_2)
+	}
+, 20000);
+
+// setTimeout(() => {
+// 	ready = true;
+// 	loadStreams("stream1", hiddenCanvas_1);
+// }, 3000);
 
 // NOTE: -----> Setup Streams <-----
 
@@ -73,17 +79,17 @@ async function setup() {
 	const uriStream_4 = "ws://stream4.local:8080";
 
 	wsavcs.wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
-	// wsavcs.wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
+	wsavcs.wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
 	// wsavcs.wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
 	// wsavcs.wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
 
 	wsavcs.wsavc_1.connect(uriStream_1);
-	// wsavcs.wsavc_2.connect(uriStream_2);
+	wsavcs.wsavc_2.connect(uriStream_2);
 	// wsavcs.wsavc_3.connect(uriStream_3);
 	// wsavcs.wsavc_4.connect(uriStream_4);
 
 	hiddenCanvas_1.getContext('webgl');
-	// hiddenCanvas_2.getContext('webgl');
+	hiddenCanvas_2.getContext('webgl');
 	// hiddenCanvas_3.getContext('webgl');
 	// hiddenCanvas_4.getContext('webgl');
 

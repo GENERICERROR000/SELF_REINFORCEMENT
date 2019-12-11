@@ -4,6 +4,7 @@ const port = require('./server/config/config').port
 const server = require('./server/src/server')
 const startPatchBoard = require('./server/src/patch_board')
 
+let start = true
 // NOTE: -----> Start Server <-----
 
 server.listen(port, (err) => {
@@ -16,6 +17,8 @@ server.listen(port, (err) => {
 	const wss = new WebSocket.Server({
 		server
 	});
-
-	startPatchBoard(wss)
+	if (start) {
+		wss.on('connection', (ws) => startPatchBoard(ws));
+		start = false;
+	}
 })

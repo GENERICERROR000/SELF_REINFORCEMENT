@@ -1,6 +1,6 @@
 const Gpio = require('pigpio').Gpio;
 
-const startPatchBoard = (wss) => {
+const startPatchBoard = (ws) => {
 	console.log("")
 	console.log("########################")
 	console.log("# Starting Patch Board #")
@@ -16,6 +16,11 @@ const startPatchBoard = (wss) => {
 	let noiseCheck2 = 0;
 	let noiseCheck3 = 0;
 	let noiseCheck4 = 0;
+
+	let prevSignal1 = 0;
+	let prevSignal2 = 0;
+	let prevSignal3 = 0;
+	let prevSignal4 = 0;
 
 	let stream1State = "head";
 	let stream2State = "torso";
@@ -63,71 +68,95 @@ const startPatchBoard = (wss) => {
 	// NOTE: -----> Alert Actions <-----
 
 	const determineStream = (x, partName) => {
-		if ( 15 < x < 35 ) {
-			noiseCheck1++;
+		console.log("diff:", x)
 
-			if (stream1State != partName && noiseCheck1 == 3) {
-				sendToClient("stream1", partName);
-				
-				console.log("");
-				console.log("------------------------------------------------");
-				console.log("Stream 1 is now being sent to:", partName);
+		if ( 15 < x && x < 35 ) {
+			if (prevSignal1 == x) {
+				noiseCheck1++;
 
+				if (stream1State != partName && noiseCheck1 == 3) {
+					sendToClient("stream1", partName);
+
+					console.log("");
+					console.log("------------------------------------------------");
+					console.log("Stream 1 is now being sent to:", partName);
+
+					noiseCheck1 = 0;
+					stream1State = partName;
+				}
+			} else {
 				noiseCheck1 = 0;
-				stream1State = partName;
 			}
 
+			prevSignal1 = x
 			return;
 		}
 
-		if ( 40 < x < 60 ) {
-			noiseCheck2++;
-			
-			if (stream2State != partName && noiseCheck2 == 3) {
-				sendToClient("stream2", partName);
-				
-				console.log("");
-				console.log("------------------------------------------------");
-				console.log("Stream 2 is now being sent to:", partName);
+		if (40 < x && x < 60) {
+			if (prevSignal2 == x) {
+				noiseCheck2++;
+				console.log("hit stream2 in a row")
 
+				if (stream2State != partName && noiseCheck2 == 3) {
+					sendToClient("stream1", partName);
+
+					console.log("");
+					console.log("------------------------------------------------");
+					console.log("Stream 2 is now being sent to:", partName);
+
+					noiseCheck2 = 0;
+					stream2State = partName;
+				}
+			} else {
 				noiseCheck2 = 0;
-				stream2State = partName;
 			}
-			
+
+			prevSignal2 = x
 			return;
 		}
 
-		if ( 65 < x < 85 ) {
-			noiseCheck3++;
-			
-			if (stream3State != partName && noiseCheck3 == 3) {
-				sendToClient("stream3", partName);
-				
-				console.log("");
-				console.log("------------------------------------------------");
-				console.log("Stream 3 is now being sent to:", partName);
+		
+		if (65 < x && x < 85) {
+			if (prevSignal3 == x) {
+				noiseCheck3++;
 
+				if (stream3State != partName && noiseCheck3 == 3) {
+					sendToClient("stream3", partName);
+
+					console.log("");
+					console.log("------------------------------------------------");
+					console.log("Stream 3 is now being sent to:", partName);
+
+					noiseCheck3 = 0;
+					stream3State = partName;
+				}
+			} else {
 				noiseCheck3 = 0;
-				stream3State = partName;
 			}
-			
+
+			prevSignal3 = x
 			return;
 		}
 
-		if ( 90 < x < 110) {
-			noiseCheck4++;
-			
-			if (stream4State != partName && noiseCheck4 == 3) {
-				sendToClient("stream4", partName);
-				c
-				onsole.log("");
-				console.log("------------------------------------------------");
-				console.log("Stream 4 is now being sent to:", partName);
+		if (90 < x && x < 110) {
+			if (prevSignal4 == x) {
+				noiseCheck4++;
 
+				if (stream4State != partName && noiseCheck4 == 3) {
+					sendToClient("stream4", partName);
+
+					console.log("");
+					console.log("------------------------------------------------");
+					console.log("Stream 4 is now being sent to:", partName);
+
+					noiseCheck4 = 0;
+					stream4State = partName;
+				}
+			} else {
 				noiseCheck4 = 0;
-				stream4State = partName;
 			}
 
+			prevSignal4 = x
 			return;
 		}
 	}
@@ -138,13 +167,13 @@ const startPatchBoard = (wss) => {
 			partName
 		};
 
-		wss.send(data);
+		ws.send(JSON.stringify(data));
 	}
 
-	const setAlert = (part, partTick) => {
+	const setAlert = (part, partTick, partName) => {
 		part.on('alert', (level, tick) => {
 			if (level == 1) {
-				startTickHead = tick;
+				partTick = tick;
 			} else {
 				const endTick = tick;
 				const diff = (endTick >> 0) - (partTick >> 0); // Unsigned 32 bit arithmetic
