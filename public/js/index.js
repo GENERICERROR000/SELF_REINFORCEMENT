@@ -113,7 +113,7 @@ async function loadStreams(id, cvs) {
 	await videoReady(vid);
 
 	if (ready) {
-		bootstrap();
+		setTimeout(() => bootstrap(), 5000);
 	}
 }
 
