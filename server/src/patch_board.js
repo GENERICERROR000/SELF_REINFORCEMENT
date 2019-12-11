@@ -80,6 +80,8 @@ const startPatchBoard = (ws) => {
 					console.log("");
 					console.log("------------------------------------------------");
 					console.log("Stream 1 is now being sent to:", partName);
+					console.log("------------------------------------------------");
+					console.log("");
 
 					noiseCheck1 = 0;
 					stream1State = partName;
@@ -95,7 +97,6 @@ const startPatchBoard = (ws) => {
 		if (40 < x && x < 60) {
 			if (prevSignal2 == x) {
 				noiseCheck2++;
-				console.log("hit stream2 in a row")
 
 				if (stream2State != partName && noiseCheck2 == 3) {
 					sendToClient("stream1", partName);
@@ -103,6 +104,8 @@ const startPatchBoard = (ws) => {
 					console.log("");
 					console.log("------------------------------------------------");
 					console.log("Stream 2 is now being sent to:", partName);
+					console.log("------------------------------------------------");
+					console.log("");
 
 					noiseCheck2 = 0;
 					stream2State = partName;
@@ -126,6 +129,8 @@ const startPatchBoard = (ws) => {
 					console.log("");
 					console.log("------------------------------------------------");
 					console.log("Stream 3 is now being sent to:", partName);
+					console.log("------------------------------------------------");
+					console.log("");
 
 					noiseCheck3 = 0;
 					stream3State = partName;
@@ -148,6 +153,8 @@ const startPatchBoard = (ws) => {
 					console.log("");
 					console.log("------------------------------------------------");
 					console.log("Stream 4 is now being sent to:", partName);
+					console.log("------------------------------------------------");
+					console.log("");
 
 					noiseCheck4 = 0;
 					stream4State = partName;
