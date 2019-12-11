@@ -68,8 +68,6 @@ const startPatchBoard = (ws) => {
 	// NOTE: -----> Alert Actions <-----
 
 	const determineStream = (x, partName) => {
-		console.log("diff:", x)
-
 		if ( 15 < x && x < 35 ) {
 			if (prevSignal1 == x) {
 				noiseCheck1++;
@@ -202,7 +200,7 @@ const startPatchBoard = (ws) => {
 		display2.trigger(50, 1);
 		display3.trigger(75, 1);
 		display4.trigger(100, 1);
-	}, 250);
+	}, 100);
 
 }
 

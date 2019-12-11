@@ -25,11 +25,10 @@ const videos = {
 };
 
 const state = {
-	head: "stream1",
-	torso: "stream2",
-	rightArm: "stream3",
-	leftArm: "stream3",
-	legs: "stream4"
+	stream1: "head",
+	stream2: "torso",
+	stream3: "arms",
+	stream4: "legs"
 };
 
 const wsavcs = {
@@ -128,24 +127,28 @@ function videoReady(vidEl) {
 }
 
 async function bootstrap() {
-	runNet("head");
-	runNet("torso");
-	runNet("rightArm");
-	runNet("leftArm");
-	runNet("legs");
+	runNet("stream1", );
+	runNet("stream2");
+	runNet("stream3");
+	runNet("stream4");
 }
 
 // NOTE: -----> BodyPix Segmentation <-----
 
-async function runNet(part) {
-	let whichStream = state[part];
-	let vid = videos[whichStream];
+async function runNet(streamId) {
+	let vid = videos[streamId];
+	let part = state[streamId];
 
 	let segmentation = await newSegment(vid);
 
-	renderSegment(segmentation, vid, part);
+	if (part == "arms") {
+		renderSegment(segmentation, vid, "rightArm");
+		renderSegment(segmentation, vid, "leftArm");
+	} else {
+		renderSegment(segmentation, vid, part);
+	}
 
-	runNet(part);
+	runNet(streamId);
 }
 
 async function newSegment(vid) {
@@ -221,21 +224,20 @@ wsPatchBoard.onmessage = function (event) {
 };
 
 const handleMessage = (streamName, partName) => {
-	console.log(`Stream "${streamName}" has been sent to ${partName}`);
+	console.log(`Stream "${streamName}" is being segmented for: ${partName}`);
 
-	switch (partName) {
-		case "head":	
-			state.head = streamName;
+	switch (streamName) {
+		case "stream1":	
+			state.stream1 = partName ;
 			return;
-		case "torso":	
-			state.torso = streamName;
+		case "stream2":	
+			state.stream2 = partName;
 			return;
-		case "arms":	
-			state.rightArm = streamName;
-			state.leftArm = streamName;
+		case "stream3":	
+			state.stream3 = partName;
 			return;
-		case "legs":	
-			state.legs = streamName;
+		case "stream4":	
+			state.stream = partName;
 			return;
 		default:
 			console.log("Patch Board asked for an invalid change")
