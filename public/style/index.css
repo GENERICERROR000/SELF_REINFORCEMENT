@@ -28,8 +28,6 @@
 }
 
 .stream-container {
-	max-width: 100%;
-	overflow: hidden;
 	font-family: monaco;
 	font-size: 14px;
 	text-align: center;
@@ -37,25 +35,23 @@
 
 #body {
 	display: grid;
-	grid-template-columns: auto auto auto;
+	/* grid-template-columns: auto auto auto; */
+	grid-template-columns: 3fr 10fr 3fr;
 }
 
-/* #head {
-	width: 400px;
+#head {
+	width: 100%;
 }
 
 #torso {
-	width: 400px;
-	display:inline-block;
+	width: 100%;
 }
 #right-arm {
-	width: 400px;
-	display:inline-block;
+	width: 100%;
 }
 #left-arm {
-	width: 400px;
-	display:inline-block;
+	width: 100%;
 }
 #legs {
-	width: 400px; */
+	width: 100%;
 }
