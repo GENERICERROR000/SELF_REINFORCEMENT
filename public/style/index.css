@@ -1,6 +1,6 @@
 #container {
 	display: grid;
-	grid-template-columns: 30vw 40vw 30vm;
+	grid-template-columns: 30vw 40vw 30vw;
 }
 
 .grid-item {
