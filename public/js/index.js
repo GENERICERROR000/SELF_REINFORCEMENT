@@ -229,18 +229,18 @@ const handleMessage = (streamName, partName) => {
 	switch (streamName) {
 		case "stream1":	
 			state.stream1 = partName ;
-			return;
+			break;
 		case "stream2":	
 			state.stream2 = partName;
-			return;
+			break;
 		case "stream3":	
 			state.stream3 = partName;
-			return;
+			break;
 		case "stream4":	
 			state.stream = partName;
-			return;
+			break;
 		default:
 			console.log("Patch Board asked for an invalid change")
-			return;
+			break;
 	}
 }

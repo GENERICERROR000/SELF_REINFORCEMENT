@@ -76,9 +76,9 @@ const startPatchBoard = (ws) => {
 					sendToClient("stream1", partName);
 
 					console.log("");
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("Stream 1 is now being sent to:", partName);
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("");
 
 					noiseCheck1 = 0;
@@ -100,9 +100,9 @@ const startPatchBoard = (ws) => {
 					sendToClient("stream1", partName);
 
 					console.log("");
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("Stream 2 is now being sent to:", partName);
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("");
 
 					noiseCheck2 = 0;
@@ -125,9 +125,9 @@ const startPatchBoard = (ws) => {
 					sendToClient("stream3", partName);
 
 					console.log("");
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("Stream 3 is now being sent to:", partName);
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("");
 
 					noiseCheck3 = 0;
@@ -149,9 +149,9 @@ const startPatchBoard = (ws) => {
 					sendToClient("stream4", partName);
 
 					console.log("");
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("Stream 4 is now being sent to:", partName);
-					console.log("------------------------------------------------");
+					console.log("----------------------------------------");
 					console.log("");
 
 					noiseCheck4 = 0;
