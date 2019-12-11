@@ -119,8 +119,8 @@ async function loadStreams(id, cvs) {
 function videoReady(vidEl) {
 	return new Promise((resolve) => {
 		vidEl.onloadedmetadata = () => {
-			vidEl.width = vidEl.videoWidth;
-			vidEl.height = vidEl.videoHeight;
+			// vidEl.width = vidEl.videoWidth;
+			// vidEl.height = vidEl.videoHeight;
 			resolve(vidEl);
 		};
 	});
