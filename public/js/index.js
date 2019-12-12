@@ -64,11 +64,6 @@ setTimeout(() => {
 	}
 , 10000);
 
-// setTimeout(() => {
-// 	ready = true;
-// 	loadStreams("stream1", hiddenCanvas_1);
-// }, 3000);
-
 // NOTE: -----> Setup Streams <-----
 
 async function setup() {
