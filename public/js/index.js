@@ -4,11 +4,6 @@ const opacity = 1;
 const flipHorizontal = true;
 const maskBlurAmount = 0;
 
-const hiddenCanvas_1 = document.createElement("canvas");
-const hiddenCanvas_2 = document.createElement("canvas");
-const hiddenCanvas_3 = document.createElement("canvas");
-const hiddenCanvas_4 = document.createElement("canvas");
-
 const canvases = {
 	head: document.getElementById('head'),
 	torso: document.getElementById('torso'),
@@ -27,7 +22,8 @@ const videos = {
 const state = {
 	stream1: "head",
 	stream2: "torso",
-	stream3: "arms",
+	stream3: "head",
+	// stream3: "arms",
 	stream4: "legs"
 };
 
@@ -49,20 +45,20 @@ let videoElement;
 // NOTE: -----> Setup System <-----
 
 setTimeout(() => setup(), 1000);
-setTimeout(() => loadStreams("stream1", hiddenCanvas_1), 5000);
-// setTimeout(() => loadStreams("stream2", hiddenCanvas_2), 10000);
-// setTimeout(() => loadStreams("stream3", hiddenCanvas_3), 15000);
+// setTimeout(() => loadStreams("stream1", videos.stream1), 5000);
+// setTimeout(() => loadStreams("stream2", videos.stream2), 10000);
+// setTimeout(() => loadStreams("stream3", videos.stream3), 15000);
 // setTimeout(() => {
 // 		ready = true
-// 		loadStreams("stream4", hiddenCanvas_4)
+// 		loadStreams("stream4", videos.stream4)
 // 	}
 // , 20000);
 
 setTimeout(() => {
 		ready = true
-		loadStreams("stream2", hiddenCanvas_2)
+		loadStreams("stream3", videos.stream3)
 	}
-, 10000);
+, 5000);
 
 // NOTE: -----> Setup Streams <-----
 
@@ -72,20 +68,15 @@ async function setup() {
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
-	wsavcs.wsavc_1 = new WSAvcPlayer(hiddenCanvas_1, "webgl", 1, 35);
-	wsavcs.wsavc_2 = new WSAvcPlayer(hiddenCanvas_2, "webgl", 1, 35);
-	// wsavcs.wsavc_3 = new WSAvcPlayer(hiddenCanvas_3, "webgl", 1, 35);
-	// wsavcs.wsavc_4 = new WSAvcPlayer(hiddenCanvas_4, "webgl", 1, 35);
+	// wsavcs.wsavc_1 = new WSAvcPlayer(videos.stream1, "webgl", 1, 35);
+	// wsavcs.wsavc_2 = new WSAvcPlayer(videos.stream2, "webgl", 1, 35);
+	wsavcs.wsavc_3 = new WSAvcPlayer(videos.stream3, "webgl", 1, 35);
+	// wsavcs.wsavc_4 = new WSAvcPlayer(videos.stream4, "webgl", 1, 35);
 
-	wsavcs.wsavc_1.connect(uriStream_1);
-	wsavcs.wsavc_2.connect(uriStream_2);
-	// wsavcs.wsavc_3.connect(uriStream_3);
+	// wsavcs.wsavc_1.connect(uriStream_1);
+	// wsavcs.wsavc_2.connect(uriStream_2);
+	wsavcs.wsavc_3.connect(uriStream_3);
 	// wsavcs.wsavc_4.connect(uriStream_4);
-
-	hiddenCanvas_1.getContext('webgl');
-	hiddenCanvas_2.getContext('webgl');
-	// hiddenCanvas_3.getContext('webgl');
-	// hiddenCanvas_4.getContext('webgl');
 
 	net = await bodyPix.load();
 }
@@ -98,13 +89,13 @@ async function loadStreams(id, cvs) {
 	
 	wsavcs[w].playStream();
 
-	let remoteStream = cvs.captureStream();
+	// let remoteStream = cvs.captureStream();
 
-	let vid = videos[id];
+	// let vid = videos[id];
 
-	vid.srcObject = remoteStream;
+	// vid.srcObject = remoteStream;
 
-	await videoReady(vid);
+	// await videoReady(vid);
 
 	if (ready) {
 		setTimeout(() => bootstrap(), 5000);
@@ -114,8 +105,8 @@ async function loadStreams(id, cvs) {
 function videoReady(vidEl) {
 	return new Promise((resolve) => {
 		vidEl.onloadedmetadata = () => {
-			vidEl.width = vidEl.videoWidth;
-			vidEl.height = vidEl.videoHeight;
+			// vidEl.width = vidEl.videoWidth;
+			// vidEl.height = vidEl.videoHeight;
 			resolve(vidEl);
 		};
 	});
