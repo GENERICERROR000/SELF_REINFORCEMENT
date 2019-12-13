@@ -3,16 +3,15 @@ const segmentationThreshold = 0.5;
 const opacity = 1;
 const flipHorizontal = true;
 const maskBlurAmount = 0;
+const width = 1280;
+const height = 720;
 
-const canvases = {
-	head: document.getElementById('head'),
-	torso: document.getElementById('torso'),
-	rightArm: document.getElementById('right-arm'),
-	leftArm: document.getElementById('left-arm'),
-	legs: document.getElementById('legs')
-};
+const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
 
-// TODO: streams, streamsForSeg, and state, and wsavcs can all be the same object
+let ready = false;
+let localStream;
+let net;
+let videoElement;
 
 const streams = {
 	stream1: document.getElementById('stream1'),
@@ -47,6 +46,14 @@ const state = {
 	stream4: "legs"
 };
 
+const partIdsForPart = {
+	'head': [0, 1],
+	'torso': [12, 13],
+	'leftArm': [2, 3, 6, 7, 10],
+	'rightArm': [4, 5, 8, 9, 11],
+	'legs': [14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+};
+
 const wsavcs = {
 	wsavc_1: {},
 	wsavc_2: {},
@@ -54,12 +61,6 @@ const wsavcs = {
 	wsavc_4: {}
 }
 
-const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
-
-let ready = false;
-let localStream;
-let net;
-let videoElement;
 
 
 // NOTE: -----> Setup System <-----
@@ -98,12 +99,6 @@ async function setup() {
 	// fitToContainer(streams.stream3);
 	// fitToContainer(streams.stream4);
 
-	// fitToContainer(canvases.head, true);
-	// fitToContainer(canvases.torso, true);
-	// fitToContainer(canvases.rightArm, true);
-	// fitToContainer(canvases.leftArm, true);
-	// fitToContainer(canvases.legs, true);
-
 	// wsavcs.wsavc_1 = new WSAvcPlayer(streams.stream1, "2d");
 	// wsavcs.wsavc_2 = new WSAvcPlayer(streams.stream2, "2d");
 	// wsavcs.wsavc_3 = new WSAvcPlayer(streams.stream3, "2d");
@@ -131,13 +126,8 @@ function fitToContainer(canvas, t) {
 	canvas.style.width = '100%';
 	canvas.style.height = '100%';
 
-	if (t) {
-		canvas.width = 1280;
-		canvas.height = 720;
-	} else {
-		canvas.width = canvas.offsetWidth;
-		canvas.height = canvas.offsetHeight;
-	}
+	canvas.width = canvas.offsetWidth;
+	canvas.height = canvas.offsetHeight;
 }
 
 // NOTE: -----> Start Streams (Bootstrap) <-----
@@ -153,23 +143,56 @@ async function loadStreams(id) {
 	}
 }
 
-const width = 1280;
-const height = 720;
 
 async function bootstrap() {
 	console.log("bootstrapping segmentation")
+
 	runNet();
-	// runNet("stream1");
-	// runNet("stream2");
-	// // runNet("stream3");
-	// // runNet("stream4");
+}
+
+async function runNet() {
+	const finalResult = tf.tidy(() => {
+		const partSegmentationsAndImages = getPartSegmentationsByImage();=
+		const resultsPartTensors = ['head', 'torso', 'leftArm', 'rightArm', 'legs'].map(
+			part => createResultTensorForPart(part, partSegmentationsAndImages)
+		);
+
+		const result = tf.concat3d(resultsPartTensors, axis = 1);
+		const resized = tf.image.resizeBilinear(result, [600, 800]);
+
+		return resized;
+	})
+
+	await tf.browser.toPixels(finalResult, document.getElementById('body'));
+
+	runNet();
+}
+
+const numberOfStreams = 2;
+function getPartSegmentationsByImage() {
+	return tf.tidy(() => {
+		const partSegmentationsAndImages = [];
+
+		for (let i = 0; i < numberOfStreams; i++) {
+			const stream = streamsForSeg[`stream${i +1}`].stream;
+			const image = tf.browser.fromPixels(stream);
+
+			const { partSegmentation } = net.segmentPersonPartsActivation(image, 0.5);
+
+			partSegmentationsAndImages.push({
+				image,
+				partSegmentation
+			});
+
+		}
+
+		return partSegmentationsAndImages;
+	});
 }
 
 function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
 	return tf.tidy(() => {
-		const initial = tf.zeros([
-			height, width, 3
-		], 'int32');
+		const initial = tf.zeros([height, width, 3], 'int32');
 
 		const result = partSegmentationsAndImages.reduce(
 			(result, partSegmentationsAndImage, i) => {
@@ -177,14 +200,10 @@ function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
 
 				if ((partForStream == partToSegment) || ((partToSegment == 'leftArm' || partToSegment == 'rightArm') && partForStream == 'arms')) {
 					const mask = buildMaskForPart(partToSegment, partSegmentationsAndImage.partSegmentation);
-
 					const depthDimension = 2;
-
 					const expandedMask = tf.expandDims(mask, depthDimension);
-
 					const image = partSegmentationsAndImage.image;
 					const maskedImage = image.mul(expandedMask);
-
 					const newResult = result.add(maskedImage);
 
 					return newResult;
@@ -197,142 +216,21 @@ function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
 	});
 }
 
-const partIdsForPart = {
-	'head': [0, 1],
-	'torso': [12, 13],
-	'leftArm': [2, 3, 6, 7, 10],
-	'rightArm': [4, 5, 8, 9, 11],
-	'legs': [14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
-};
-
 function buildMaskForPart(part, partSegmentation) {
 	const partIdArr = partIdsForPart[part];
 
 	return tf.tidy(() => {
-		// todo: get list of part ids for this part, and multiply masks for each part id and return that;
-
-		let res;
+		let combinedMask;
 		partIdArr.forEach(partId => {
-			if (res) {
-				res = tf.add(res, tf.equal(partSegmentation, partId))
+			if (combinedMask) {
+				combinedMask = tf.add(combinedMask, tf.equal(partSegmentation, partId));
 			} else {
-				res = tf.equal(partSegmentation, partId)
+				combinedMask = tf.equal(partSegmentation, partId);
 			}
-
 		})
 
-		return res
+		return combinedMask;
 	});
-}
-
-const numberOfStreams = 2;
-function getPartSegmentationsByImage() {
-	return tf.tidy(() => {
-		const partSegmentationsAndImages = [];
- 
-		for (let i = 0; i < numberOfStreams; i++) {
-			const stream = streamsForSeg[`stream${i +1}`].stream
-			const image = tf.browser.fromPixels(stream);
-
-			const {
-				partSegmentation
-			} = net.segmentPersonPartsActivation(image, 0.5);
-
-			partSegmentationsAndImages.push({
-				image,
-				partSegmentation
-			});
-			
-		}
-
-		return partSegmentationsAndImages;
-	});
-}
-
-// NOTE: -----> BodyPix Segmentation <-----
-
-// async function runNet(streamId) {
-async function runNet() {
-	const finalResult = tf.tidy(() => {
-		const partSegmentationsAndImages = getPartSegmentationsByImage();
-
-		const resultsPartTensors = ['head', 'torso', 'leftArm', 'rightArm', 'legs'].map(
-			part => createResultTensorForPart(part, partSegmentationsAndImages)
-		);
-
-		const result = tf.concat3d(resultsPartTensors, axis = 1);
-
-		const resized = tf.image.resizeBilinear(result, [600, 800]);
-
-		return resized;
-	})
-
-	await tf.browser.toPixels(finalResult, document.getElementById('maincanvas'));
-	
-	// let vid = streamsForSeg[streamId].stream;
-	// let part = state[streamId];
-
-	// let segmentation = await newSegment(vid);
-
-	// if (part == "arms") {
-	// 	renderSegment(segmentation, vid, "rightArm");
-	// 	renderSegment(segmentation, vid, "leftArm");
-	// } else {
-	// 	renderSegment(segmentation, vid, part);
-	// }
-
-	// runNet(streamId);
-	runNet();
-}
-
-async function newSegment(vid) {
-	let newSegmentation = await net.segmentPersonParts(vid, outputStride, segmentationThreshold);
-
-	return newSegmentation;
-}
-
-function renderSegment(segmentation, vid, part) {
-	let selectedPart = whichPart(segmentation, part);
-
-	bodyPix.drawMask(selectedPart.cvs, vid, selectedPart.mask, opacity, maskBlurAmount, flipHorizontal);
-
-}
-
-function whichPart(segmentation, part) {
-	switch (part) {
-		case "head":
-			return {
-				mask: createMask(segmentation, BODY_COLORS['HEAD']),
-				cvs: canvases[part]
-			};
-		case "torso":
-			return {
-				mask: createMask(segmentation, BODY_COLORS['TORSO']),
-				cvs: canvases[part]
-			};
-		case "rightArm":
-			return {
-				mask: createMask(segmentation, BODY_COLORS['RIGHT_ARM']),
-				cvs: canvases[part]
-			};
-		case "leftArm":
-			return {
-				mask: createMask(segmentation, BODY_COLORS['LEFT_ARM']),
-				cvs: canvases[part]
-			};
-		case "legs":
-			return {
-				mask: createMask(segmentation, BODY_COLORS['LEGS']),
-				cvs: canvases[part]
-			};
-		default:
-			console.log("Something went wrong picking a part")
-			return {};
-	}
-}
-
-function createMask(segmentation, colors) {
-	return bodyPix.toColoredPartMask(segmentation, colors);
 }
 
 // NOTE: -----> Web Socket Actions <-----
