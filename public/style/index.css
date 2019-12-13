@@ -1,9 +1,15 @@
 #container {
 	display: grid;
 	grid-template-columns: 3fr 10fr 3fr;
+	grid-template-rows: 3fr 10fr 3fr;
 	border-style: solid;
 	border-width: 3px;
 	height: 100vh;
+}
+
+#body {
+	display: grid;
+	grid-template-columns: 3fr 10fr 3fr;
 }
 
 #box1 {
@@ -31,7 +37,7 @@
 .streams {
 	border-width: 4px;
 	width: auto;
-	height: 300px;
+	height: 400px;
 	position: relative;
 }
 
@@ -41,7 +47,7 @@
 }
 
 .body-item {
-	width: 200px;
-	height: 150px;
+	width: 400px;
+	height: 350px;
 	position: relative;
 }

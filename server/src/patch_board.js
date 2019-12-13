@@ -176,6 +176,12 @@ const startPatchBoard = (ws) => {
 	}
 
 	const setAlert = (part, partTick, partName) => {
+		// TODO: TEST THIS
+		// Level must be stable for 10 ms before an alert event is emitted.
+		part.glitchFilter(10000);
+
+
+
 		part.on('alert', (level, tick) => {
 			if (level == 1) {
 				partTick = tick;

@@ -43,8 +43,7 @@ const streamsForSeg = {
 const state = {
 	stream1: "head",
 	stream2: "torso",
-	stream3: "head",
-	// stream3: "arms",
+	stream3: "arms",
 	stream4: "legs"
 };
 
@@ -77,7 +76,7 @@ setTimeout(() => setup(), 1000);
 
 setTimeout(() => {
 		ready = true
-		loadStreams("stream3")
+		loadStreams("stream1")
 	}
 , 5000);
 
@@ -107,22 +106,22 @@ async function setup() {
 
 	// wsavcs.wsavc_1 = new WSAvcPlayer(streams.stream1, "2d");
 	// wsavcs.wsavc_2 = new WSAvcPlayer(streams.stream2, "2d");
-	wsavcs.wsavc_3 = new WSAvcPlayer(streams.stream3, "2d");
+	// wsavcs.wsavc_3 = new WSAvcPlayer(streams.stream3, "2d");
 	// wsavcs.wsavc_4 = new WSAvcPlayer(streams.stream4, "2d");
 
-	// streamsForSeg.stream1.holder = new WSAvcPlayer(streamsForSeg.stream1.stream, "2d");
+	streamsForSeg.stream1.holder = new WSAvcPlayer(streamsForSeg.stream1.stream, "2d");
 	// streamsForSeg.stream2.holder = new WSAvcPlayer(streamsForSeg.stream2.stream, "2d");
-	streamsForSeg.stream3.holder = new WSAvcPlayer(streamsForSeg.stream3.stream, "2d");
+	// streamsForSeg.stream3.holder = new WSAvcPlayer(streamsForSeg.stream3.stream, "2d");
 	// streamsForSeg.stream4.holder = new WSAvcPlayer(streamsForSeg.stream4.stream, "2d");
 
 	// wsavcs.wsavc_1.connect(uriStream_1);
 	// wsavcs.wsavc_2.connect(uriStream_2);
-	wsavcs.wsavc_3.connect(uriStream_3);
+	// wsavcs.wsavc_3.connect(uriStream_3);
 	// wsavcs.wsavc_4.connect(uriStream_4);
 
-	// streamsForSeg.stream1.holder.connect(uriStream_1);
+	streamsForSeg.stream1.holder.connect(uriStream_1);
 	// streamsForSeg.stream2.holder.connect(uriStream_2);
-	streamsForSeg.stream3.holder.connect(uriStream_3);
+	// streamsForSeg.stream3.holder.connect(uriStream_3);
 	// streamsForSeg.stream4.holder.connect(uriStream_4);
 
 	net = await bodyPix.load();
@@ -146,7 +145,7 @@ function fitToContainer(canvas, t) {
 async function loadStreams(id) {
 	let w = "wsavc_" + id.charAt(id.length - 1)
 	
-	wsavcs[w].playStream();
+	// wsavcs[w].playStream();
 	streamsForSeg[id].holder.playStream();
 
 	if (ready) {
@@ -154,29 +153,141 @@ async function loadStreams(id) {
 	}
 }
 
+const width = 1280;
+const height = 720;
+
+// const outputTensors = {
+// 	'head': tf.Tensor3d([height, width, 3]),
+// 	'torso': tf.Tensor3d([height, width, 3]),
+// };
+
 async function bootstrap() {
-	// runNet("stream1", );
+	console.log("bootstrapping segmentation")
+	runNet();
+	// runNet("stream1");
 	// runNet("stream2");
-	runNet("stream3");
-	// runNet("stream4");
+	// // runNet("stream3");
+	// // runNet("stream4");
+}
+
+function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
+	return tf.tidy(() => {
+		const initial = tf.zeros([
+			height, width, 3
+		], 'int32');
+
+		const result = partSegmentationsAndImages.reduce(
+			(result, partSegmentationsAndImage, i) => {
+				const partForStream = state[`stream${i +1}`];
+
+				if ((partForStream == partToSegment) || ((partToSegment == 'leftArm' || partToSegment == 'rightArm') && partForStream == 'arms')) {
+					const mask = buildMaskForPart(partToSegment, partSegmentationsAndImage.partSegmentation);
+
+					const depthDimension = 2;
+
+					const expandedMask = tf.expandDims(mask, depthDimension);
+
+					const image = partSegmentationsAndImage.image;
+					const maskedImage = image.mul(expandedMask);
+
+					const newResult = result.add(maskedImage);
+
+					return newResult;
+				} else {
+					return result;
+				}
+		}, initial);
+
+		return result;
+	});
+}
+
+const partIdsForPart = {
+	'head': [0, 1],
+	'torso': [12, 13],
+	'leftArm': [2, 3, 6, 7, 10],
+	'rightArm': [4, 5, 8, 9, 11],
+	'legs': [14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+};
+
+function buildMaskForPart(part, partSegmentation) {
+	const partIdArr = partIdsForPart[part];
+
+	return tf.tidy(() => {
+		// todo: get list of part ids for this part, and multiply masks for each part id and return that;
+
+		let res;
+		partIdArr.forEach(partId => {
+			if (res) {
+				res = tf.add(res, tf.equal(partSegmentation, partId))
+			} else {
+				res = tf.equal(partSegmentation, partId)
+			}
+
+		})
+
+		return res
+	});
+}
+
+const numberOfStreams = 1;
+function getPartSegmentationsByImage() {
+	return tf.tidy(() => {
+		const partSegmentationsAndImages = [];
+ 
+		for (let i = 0; i < numberOfStreams; i++) {
+			const stream = streamsForSeg[`stream${i +1}`].stream
+			const image = tf.browser.fromPixels(stream);
+
+			const {
+				partSegmentation
+			} = net.segmentPersonPartsActivation(image, 0.5);
+
+			partSegmentationsAndImages.push({
+				image,
+				partSegmentation
+			});
+			
+		}
+
+		return partSegmentationsAndImages;
+	});
 }
 
 // NOTE: -----> BodyPix Segmentation <-----
 
-async function runNet(streamId) {
-	let vid = streamsForSeg[streamId].stream;
-	let part = state[streamId];
+// async function runNet(streamId) {
+async function runNet() {
+	const finalResult = tf.tidy(() => {
+		const partSegmentationsAndImages = getPartSegmentationsByImage();
 
-	let segmentation = await newSegment(vid);
+		const resultsPartTensors = ['head', 'torso', 'leftArm', 'rightArm', 'legs'].map(
+			part => createResultTensorForPart(part, partSegmentationsAndImages)
+		);
 
-	if (part == "arms") {
-		renderSegment(segmentation, vid, "rightArm");
-		renderSegment(segmentation, vid, "leftArm");
-	} else {
-		renderSegment(segmentation, vid, part);
-	}
+		const result = tf.concat3d(resultsPartTensors, axis = 1);
 
-	runNet(streamId);
+		const resized = tf.image.resizeBilinear(result, [600, 800]);
+
+		return resized;
+	})
+
+	await tf.browser.toPixels(finalResult, document.getElementById('maincanvas'));
+	
+	// let vid = streamsForSeg[streamId].stream;
+	// let part = state[streamId];
+
+	// let segmentation = await newSegment(vid);
+
+	// if (part == "arms") {
+	// 	renderSegment(segmentation, vid, "rightArm");
+	// 	renderSegment(segmentation, vid, "leftArm");
+	// } else {
+	// 	renderSegment(segmentation, vid, part);
+	// }
+
+	// runNet(streamId);
+	runNet();
 }
 
 async function newSegment(vid) {
