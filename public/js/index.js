@@ -65,7 +65,7 @@ let videoElement;
 // NOTE: -----> Setup System <-----
 
 setTimeout(() => setup(), 1000);
-// setTimeout(() => loadStreams("stream1"), 5000);
+setTimeout(() => loadStreams("stream1"), 5000);
 // setTimeout(() => loadStreams("stream2"), 10000);
 // setTimeout(() => loadStreams("stream3"), 15000);
 // setTimeout(() => {
@@ -78,7 +78,7 @@ setTimeout(() => {
 		ready = true
 		loadStreams("stream1")
 	}
-, 5000);
+, 10000);
 
 // NOTE: -----> Setup Streams <-----
 
@@ -93,16 +93,16 @@ async function setup() {
 	streams.stream3.getContext('2d');
 	streams.stream4.getContext('2d');
 
-	fitToContainer(streams.stream1);
-	fitToContainer(streams.stream2);
-	fitToContainer(streams.stream3);
-	fitToContainer(streams.stream4);
+	// fitToContainer(streams.stream1);
+	// fitToContainer(streams.stream2);
+	// fitToContainer(streams.stream3);
+	// fitToContainer(streams.stream4);
 
-	fitToContainer(canvases.head, true);
-	fitToContainer(canvases.torso, true);
-	fitToContainer(canvases.rightArm, true);
-	fitToContainer(canvases.leftArm, true);
-	fitToContainer(canvases.legs, true);
+	// fitToContainer(canvases.head, true);
+	// fitToContainer(canvases.torso, true);
+	// fitToContainer(canvases.rightArm, true);
+	// fitToContainer(canvases.leftArm, true);
+	// fitToContainer(canvases.legs, true);
 
 	// wsavcs.wsavc_1 = new WSAvcPlayer(streams.stream1, "2d");
 	// wsavcs.wsavc_2 = new WSAvcPlayer(streams.stream2, "2d");
@@ -110,7 +110,7 @@ async function setup() {
 	// wsavcs.wsavc_4 = new WSAvcPlayer(streams.stream4, "2d");
 
 	streamsForSeg.stream1.holder = new WSAvcPlayer(streamsForSeg.stream1.stream, "2d");
-	// streamsForSeg.stream2.holder = new WSAvcPlayer(streamsForSeg.stream2.stream, "2d");
+	streamsForSeg.stream2.holder = new WSAvcPlayer(streamsForSeg.stream2.stream, "2d");
 	// streamsForSeg.stream3.holder = new WSAvcPlayer(streamsForSeg.stream3.stream, "2d");
 	// streamsForSeg.stream4.holder = new WSAvcPlayer(streamsForSeg.stream4.stream, "2d");
 
@@ -120,7 +120,7 @@ async function setup() {
 	// wsavcs.wsavc_4.connect(uriStream_4);
 
 	streamsForSeg.stream1.holder.connect(uriStream_1);
-	// streamsForSeg.stream2.holder.connect(uriStream_2);
+	streamsForSeg.stream2.holder.connect(uriStream_2);
 	// streamsForSeg.stream3.holder.connect(uriStream_3);
 	// streamsForSeg.stream4.holder.connect(uriStream_4);
 
@@ -155,11 +155,6 @@ async function loadStreams(id) {
 
 const width = 1280;
 const height = 720;
-
-// const outputTensors = {
-// 	'head': tf.Tensor3d([height, width, 3]),
-// 	'torso': tf.Tensor3d([height, width, 3]),
-// };
 
 async function bootstrap() {
 	console.log("bootstrapping segmentation")
@@ -230,7 +225,7 @@ function buildMaskForPart(part, partSegmentation) {
 	});
 }
 
-const numberOfStreams = 1;
+const numberOfStreams = 2;
 function getPartSegmentationsByImage() {
 	return tf.tidy(() => {
 		const partSegmentationsAndImages = [];
