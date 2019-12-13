@@ -12,6 +12,8 @@ const canvases = {
 	legs: document.getElementById('legs')
 };
 
+// TODO: streams, streamsForSeg, and state, and wsavcs can all be the same object
+
 const streams = {
 	stream1: document.getElementById('stream1'),
 	stream2: document.getElementById('stream2'),
@@ -19,18 +21,24 @@ const streams = {
 	stream4: document.getElementById('stream4')
 };
 
-// var canvas = document.querySelector('canvas'),
-// ctx = canvas.getContext('2d');
-// fitToContainer(canvas);
-
-// function fitToContainer(canvas) {
-// 	canvas.style.width = '100%';
-// 	canvas.style.height = '100%';
-// 	canvas.width = canvas.offsetWidth;
-// 	canvas.height = canvas.offsetHeight;
-// }
-
-
+const streamsForSeg = {
+	stream1: {
+		stream: document.createElement('canvas'),
+		holder: null
+	},
+	stream2: {
+		stream: document.createElement('canvas'),
+		holder: null
+	},
+	stream3: {
+		stream: document.createElement('canvas'),
+		holder: null
+	},
+	stream4: {
+		stream: document.createElement('canvas'),
+		holder: null
+	}
+};
 
 const state = {
 	stream1: "head",
@@ -58,18 +66,18 @@ let videoElement;
 // NOTE: -----> Setup System <-----
 
 setTimeout(() => setup(), 1000);
-// setTimeout(() => loadStreams("stream1", streams.stream1), 5000);
-// setTimeout(() => loadStreams("stream2", streams.stream2), 10000);
-// setTimeout(() => loadStreams("stream3", streams.stream3), 15000);
+// setTimeout(() => loadStreams("stream1"), 5000);
+// setTimeout(() => loadStreams("stream2"), 10000);
+// setTimeout(() => loadStreams("stream3"), 15000);
 // setTimeout(() => {
 // 		ready = true
-// 		loadStreams("stream4", streams.stream4)
+// 		loadStreams("stream4")
 // 	}
 // , 20000);
 
 setTimeout(() => {
 		ready = true
-		loadStreams("stream3", streams.stream3)
+		loadStreams("stream3")
 	}
 , 5000);
 
@@ -81,88 +89,70 @@ async function setup() {
 	const uriStream_3 = "ws://stream3.local:8080";
 	const uriStream_4 = "ws://stream4.local:8080";
 
-	// wsavcs.wsavc_1 = new WSAvcPlayer(streams.stream1, "webgl");
-	// wsavcs.wsavc_2 = new WSAvcPlayer(streams.stream2, "webgl");
-	// wsavcs.wsavc_3 = new WSAvcPlayer(streams.stream3, "webgl");
+	streams.stream1.getContext('2d');
+	streams.stream2.getContext('2d');
+	streams.stream3.getContext('2d');
+	streams.stream4.getContext('2d');
+
+	fitToContainer(streams.stream1);
+	fitToContainer(streams.stream2);
+	fitToContainer(streams.stream3);
+	fitToContainer(streams.stream4);
+
+	fitToContainer(canvases.head, true);
+	fitToContainer(canvases.torso, true);
+	fitToContainer(canvases.rightArm, true);
+	fitToContainer(canvases.leftArm, true);
+	fitToContainer(canvases.legs, true);
+
+	// wsavcs.wsavc_1 = new WSAvcPlayer(streams.stream1, "2d");
+	// wsavcs.wsavc_2 = new WSAvcPlayer(streams.stream2, "2d");
 	wsavcs.wsavc_3 = new WSAvcPlayer(streams.stream3, "2d");
-	// wsavcs.wsavc_4 = new WSAvcPlayer(streams.stream4, "webgl");
+	// wsavcs.wsavc_4 = new WSAvcPlayer(streams.stream4, "2d");
+
+	// streamsForSeg.stream1.holder = new WSAvcPlayer(streamsForSeg.stream1.stream, "2d");
+	// streamsForSeg.stream2.holder = new WSAvcPlayer(streamsForSeg.stream2.stream, "2d");
+	streamsForSeg.stream3.holder = new WSAvcPlayer(streamsForSeg.stream3.stream, "2d");
+	// streamsForSeg.stream4.holder = new WSAvcPlayer(streamsForSeg.stream4.stream, "2d");
 
 	// wsavcs.wsavc_1.connect(uriStream_1);
 	// wsavcs.wsavc_2.connect(uriStream_2);
 	wsavcs.wsavc_3.connect(uriStream_3);
 	// wsavcs.wsavc_4.connect(uriStream_4);
 
+	// streamsForSeg.stream1.holder.connect(uriStream_1);
+	// streamsForSeg.stream2.holder.connect(uriStream_2);
+	streamsForSeg.stream3.holder.connect(uriStream_3);
+	// streamsForSeg.stream4.holder.connect(uriStream_4);
+
 	net = await bodyPix.load();
 }
 
+function fitToContainer(canvas, t) {
+	canvas.style.width = '100%';
+	canvas.style.height = '100%';
+
+	if (t) {
+		canvas.width = 1280;
+		canvas.height = 720;
+	} else {
+		canvas.width = canvas.offsetWidth;
+		canvas.height = canvas.offsetHeight;
+	}
+}
 
 // NOTE: -----> Start Streams (Bootstrap) <-----
 
-async function loadStreams(id, cvs) {
+async function loadStreams(id) {
 	let w = "wsavc_" + id.charAt(id.length - 1)
 	
 	wsavcs[w].playStream();
-
-	// carl.getContext('webgl');
-	// hiddenCanvas_1.getContext('webgl');
-	// hiddenCanvas_2.getContext('webgl');
-	// hiddenCanvas_3.getContext('webgl');
-	// hiddenCanvas_4.getContext('webgl');
-
-	// const video = document.querySelector('video');
-	// const canvas = window.canvas = document.querySelector('canvas');
-	// canvas.width = 480;
-	// canvas.height = 360;
-
-	// const button = document.querySelector('button');
-	// button.onclick = function () {
-	// 	canvas.width = video.videoWidth;
-	// 	canvas.height = video.videoHeight;
-	// 	canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-	// };
-
-	
-	// let remoteStream = cvs.captureStream();
-	// let remoteStream = carl.captureStream();
-	// let poop = cloneCanvas(carl, cvs)
-	// streams.stream3.getContext('2d').drawImage(poop, 0, 0, carl.width, carl.height)
-
-	// let vid = streams[id];
-
-	// vid.srcObject = remoteStream;
-
-	// await videoReady(vid);
+	streamsForSeg[id].holder.playStream();
 
 	if (ready) {
 		setTimeout(() => bootstrap(), 5000);
 	}
 }
-
-// function cloneCanvas(oldCanvas, newCanvas) {
-
-// 	//create a new canvas
-// 	var context = newCanvas.getContext('2d');
-
-// 	//set dimensions
-// 	newCanvas.width = oldCanvas.width;
-// 	newCanvas.height = oldCanvas.height;
-
-// 	//apply the old canvas to the new one
-// 	context.drawImage(oldCanvas, 0, 0);
-
-// 	//return the new canvas
-// 	return newCanvas;
-// }
-
-// function videoReady(vidEl) {
-// 	return new Promise((resolve) => {
-// 		vidEl.onloadedmetadata = () => {
-// 			vidEl.width = vidEl.videoWidth;
-// 			vidEl.height = vidEl.videoHeight;
-// 			resolve(vidEl);
-// 		};
-// 	});
-// }
 
 async function bootstrap() {
 	// runNet("stream1", );
@@ -174,7 +164,7 @@ async function bootstrap() {
 // NOTE: -----> BodyPix Segmentation <-----
 
 async function runNet(streamId) {
-	let vid = streams[streamId];
+	let vid = streamsForSeg[streamId].stream;
 	let part = state[streamId];
 
 	let segmentation = await newSegment(vid);
@@ -199,6 +189,7 @@ function renderSegment(segmentation, vid, part) {
 	let selectedPart = whichPart(segmentation, part);
 
 	bodyPix.drawMask(selectedPart.cvs, vid, selectedPart.mask, opacity, maskBlurAmount, flipHorizontal);
+
 }
 
 function whichPart(segmentation, part) {
@@ -238,7 +229,7 @@ function createMask(segmentation, colors) {
 	return bodyPix.toColoredPartMask(segmentation, colors);
 }
 
-// NOTE: -----> Web Socket actions <-----
+// NOTE: -----> Web Socket Actions <-----
 
 let wsPatchBoard = new WebSocket(wsUrl);
 
