@@ -17,6 +17,7 @@ server.listen(port, (err) => {
 	const wss = new WebSocket.Server({
 		server
 	});
+	
 	if (start) {
 		wss.on('connection', (ws) => startPatchBoard(ws));
 		start = false;

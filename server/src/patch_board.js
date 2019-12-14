@@ -176,7 +176,7 @@ const startPatchBoard = (ws) => {
 	}
 
 	const setAlert = (part, partTick, partName) => {
-		// TODO: TEST THIS
+		// TODO: TEST THIS (do I need my custom signal check)
 		// Level must be stable for 10 ms before an alert event is emitted.
 		part.glitchFilter(10000);
 

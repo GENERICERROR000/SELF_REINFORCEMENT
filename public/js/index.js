@@ -3,15 +3,15 @@ const segmentationThreshold = 0.5;
 const opacity = 1;
 const flipHorizontal = true;
 const maskBlurAmount = 0;
-const width = 1280;
-const height = 720;
+const widthStream = 1280;
+const heightStream = 720;
 
-const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
+const bodyCvs = document.getElementById('body');
+// const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
+const wsUrl = 'ws://192.168.1.9:5050';
 
 let ready = false;
-let localStream;
 let net;
-let videoElement;
 
 const streams = {
 	stream1: document.getElementById('stream1'),
@@ -77,27 +77,31 @@ setTimeout(() => loadStreams("stream1"), 5000);
 
 setTimeout(() => {
 		ready = true
-		loadStreams("stream1")
+		loadStreams("stream2")
 	}
 , 10000);
 
 // NOTE: -----> Setup Streams <-----
 
 async function setup() {
-	const uriStream_1 = "ws://stream1.local:8080";
-	const uriStream_2 = "ws://stream2.local:8080";
-	const uriStream_3 = "ws://stream3.local:8080";
-	const uriStream_4 = "ws://stream4.local:8080";
+	// const uriStream_1 = "ws://stream1.local:8080";
+	// const uriStream_2 = "ws://stream2.local:8080";
+	// const uriStream_3 = "ws://stream3.local:8080";
+	// const uriStream_4 = "ws://stream4.local:8080";
+	const uriStream_1 = "ws://192.168.1.3:8080";
+	const uriStream_2 = "ws://192.168.1.5:8080";
+	const uriStream_3 = "ws://192.168.1.6:8080";
+	const uriStream_4 = "ws://192.168.1.7:8080";
 
 	streams.stream1.getContext('2d');
 	streams.stream2.getContext('2d');
 	streams.stream3.getContext('2d');
 	streams.stream4.getContext('2d');
 
-	// fitToContainer(streams.stream1);
-	// fitToContainer(streams.stream2);
-	// fitToContainer(streams.stream3);
-	// fitToContainer(streams.stream4);
+	fitToContainer(streams.stream1);
+	fitToContainer(streams.stream2);
+	fitToContainer(streams.stream3);
+	fitToContainer(streams.stream4);
 
 	// wsavcs.wsavc_1 = new WSAvcPlayer(streams.stream1, "2d");
 	// wsavcs.wsavc_2 = new WSAvcPlayer(streams.stream2, "2d");
@@ -133,7 +137,7 @@ function fitToContainer(canvas, t) {
 // NOTE: -----> Start Streams (Bootstrap) <-----
 
 async function loadStreams(id) {
-	let w = "wsavc_" + id.charAt(id.length - 1)
+	let w = "wsavc_" + id.charAt(id.length - 1);
 	
 	// wsavcs[w].playStream();
 	streamsForSeg[id].holder.playStream();
@@ -143,7 +147,6 @@ async function loadStreams(id) {
 	}
 }
 
-
 async function bootstrap() {
 	console.log("bootstrapping segmentation")
 
@@ -152,18 +155,35 @@ async function bootstrap() {
 
 async function runNet() {
 	const finalResult = tf.tidy(() => {
-		const partSegmentationsAndImages = getPartSegmentationsByImage();=
-		const resultsPartTensors = ['head', 'torso', 'leftArm', 'rightArm', 'legs'].map(
-			part => createResultTensorForPart(part, partSegmentationsAndImages)
-		);
+		const partSegmentationsAndImages = getPartSegmentationsByImage();
 
-		const result = tf.concat3d(resultsPartTensors, axis = 1);
-		const resized = tf.image.resizeBilinear(result, [600, 800]);
+		const resultsPartTensors = [
+			['zero', 'head', 'zero'],
+			['leftArm', 'torso', 'rightArm'],
+			['zero', 'legs', 'zero']
+		];
+
+		const rows = resultsPartTensors.map(
+			partGroup => partGroup.map(
+				part => createResultTensorForPart(part, partSegmentationsAndImages)
+		));
+
+		const asRows = rows.map(elementsInRow => tf.concat3d(elementsInRow, axis=1));
+
+		const stackedVertically = tf.concat3d(asRows, axis=0);
+
+		// Aspect ration of 1280 x 720 => 16:9
+		// const result = tf.concat3d(resultsPartTensors, axis = 1);
+		// const resized = tf.image.resizeBilinear(stackedVertically, [360, 640]);
+		// const resized = tf.image.resizeBilinear(stackedVertically, [600, 800]);
+		const resized = tf.image.resizeBilinear(stackedVertically, [768, 1024]);
 
 		return resized;
 	})
 
-	await tf.browser.toPixels(finalResult, document.getElementById('body'));
+	await tf.browser.toPixels(finalResult, bodyCvs);
+
+	finalResult.dispose();
 
 	runNet();
 }
@@ -183,7 +203,6 @@ function getPartSegmentationsByImage() {
 				image,
 				partSegmentation
 			});
-
 		}
 
 		return partSegmentationsAndImages;
@@ -192,27 +211,31 @@ function getPartSegmentationsByImage() {
 
 function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
 	return tf.tidy(() => {
-		const initial = tf.zeros([height, width, 3], 'int32');
+		const initial = tf.zeros([heightStream, widthStream, 3], 'int32');
 
-		const result = partSegmentationsAndImages.reduce(
-			(result, partSegmentationsAndImage, i) => {
-				const partForStream = state[`stream${i +1}`];
+		if (partToSegment == "zero") {
+			return initial;
+		} else {
+			const result = partSegmentationsAndImages.reduce(
+				(result, partSegmentationsAndImage, i) => {
+					const partForStream = state[`stream${i +1}`];
 
-				if ((partForStream == partToSegment) || ((partToSegment == 'leftArm' || partToSegment == 'rightArm') && partForStream == 'arms')) {
-					const mask = buildMaskForPart(partToSegment, partSegmentationsAndImage.partSegmentation);
-					const depthDimension = 2;
-					const expandedMask = tf.expandDims(mask, depthDimension);
-					const image = partSegmentationsAndImage.image;
-					const maskedImage = image.mul(expandedMask);
-					const newResult = result.add(maskedImage);
+					if ((partForStream == partToSegment) || ((partToSegment == 'leftArm' || partToSegment == 'rightArm') && partForStream == 'arms')) {
+						const mask = buildMaskForPart(partToSegment, partSegmentationsAndImage.partSegmentation);
+						const depthDimension = 2;
+						const expandedMask = tf.expandDims(mask, depthDimension);
+						const image = partSegmentationsAndImage.image;
+						const maskedImage = image.mul(expandedMask);
+						const newResult = result.add(maskedImage);
 
-					return newResult;
-				} else {
-					return result;
-				}
-		}, initial);
+						return newResult;
+					} else {
+						return result;
+					}
+				}, initial);
 
-		return result;
+			return result;
+		}
 	});
 }
 

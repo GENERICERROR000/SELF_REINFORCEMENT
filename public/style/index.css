@@ -2,14 +2,10 @@
 	display: grid;
 	grid-template-columns: 3fr 10fr 3fr;
 	grid-template-rows: 3fr 10fr 3fr;
+	border-color: silver;
 	border-style: solid;
 	border-width: 3px;
 	height: 100vh;
-}
-
-#body {
-	display: grid;
-	grid-template-columns: 3fr 10fr 3fr;
 }
 
 #box1 {
@@ -29,25 +25,24 @@
 }
 
 .stream-container {
-	font-family: monaco;
+	font-family: Monaco;
 	font-size: 14px;
 	text-align: center;
+	color: silver;
 }
 
 .streams {
 	border-width: 4px;
-	width: auto;
+	width: 400px;
 	height: 400px;
 	position: relative;
 }
 
-.stream-cvs {
-	-webkit-transform:scaleX(-1);
-	transform:scaleX(-1);
+#body {
+	position: relative;
 }
 
-.body-item {
-	width: 400px;
-	height: 350px;
-	position: relative;
+.stream-cvs {
+	-webkit-transform: scaleX(-1);
+	transform: scaleX(-1);
 }
