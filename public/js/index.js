@@ -1,15 +1,10 @@
-const outputStride = 16;
-const segmentationThreshold = 0.5;
-const opacity = 1;
-const flipHorizontal = true;
-const maskBlurAmount = 0;
-const widthStream = 1280;
-const heightStream = 720;
-
 const bodyCvs = document.getElementById('body');
-// const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
 const wsUrl = 'ws://192.168.1.9:5050';
+// const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
+const heightStream = 360;
+const widthStream = 640;
 
+let imageTensors = [];
 let ready = false;
 let net;
 
@@ -54,15 +49,6 @@ const partIdsForPart = {
 	'legs': [14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
 };
 
-const wsavcs = {
-	wsavc_1: {},
-	wsavc_2: {},
-	wsavc_3: {},
-	wsavc_4: {}
-}
-
-
-
 // NOTE: -----> Setup System <-----
 
 setTimeout(() => setup(), 1000);
@@ -103,27 +89,19 @@ async function setup() {
 	fitToContainer(streams.stream3);
 	fitToContainer(streams.stream4);
 
-	// wsavcs.wsavc_1 = new WSAvcPlayer(streams.stream1, "2d");
-	// wsavcs.wsavc_2 = new WSAvcPlayer(streams.stream2, "2d");
-	// wsavcs.wsavc_3 = new WSAvcPlayer(streams.stream3, "2d");
-	// wsavcs.wsavc_4 = new WSAvcPlayer(streams.stream4, "2d");
-
 	streamsForSeg.stream1.holder = new WSAvcPlayer(streamsForSeg.stream1.stream, "2d");
 	streamsForSeg.stream2.holder = new WSAvcPlayer(streamsForSeg.stream2.stream, "2d");
 	// streamsForSeg.stream3.holder = new WSAvcPlayer(streamsForSeg.stream3.stream, "2d");
 	// streamsForSeg.stream4.holder = new WSAvcPlayer(streamsForSeg.stream4.stream, "2d");
-
-	// wsavcs.wsavc_1.connect(uriStream_1);
-	// wsavcs.wsavc_2.connect(uriStream_2);
-	// wsavcs.wsavc_3.connect(uriStream_3);
-	// wsavcs.wsavc_4.connect(uriStream_4);
 
 	streamsForSeg.stream1.holder.connect(uriStream_1);
 	streamsForSeg.stream2.holder.connect(uriStream_2);
 	// streamsForSeg.stream3.holder.connect(uriStream_3);
 	// streamsForSeg.stream4.holder.connect(uriStream_4);
 
-	net = await bodyPix.load();
+	net = await bodyPix.load({
+		architecture: 'ResNet50'
+	});
 }
 
 function fitToContainer(canvas, t) {
@@ -137,9 +115,6 @@ function fitToContainer(canvas, t) {
 // NOTE: -----> Start Streams (Bootstrap) <-----
 
 async function loadStreams(id) {
-	let w = "wsavc_" + id.charAt(id.length - 1);
-	
-	// wsavcs[w].playStream();
 	streamsForSeg[id].holder.playStream();
 
 	if (ready) {
@@ -150,7 +125,32 @@ async function loadStreams(id) {
 async function bootstrap() {
 	console.log("bootstrapping segmentation")
 
+	captureStreams();
 	runNet();
+}
+
+async function captureStreams() {
+	const newImageTensors = tf.tidy(() => {
+		const result = [];
+
+		for (let i = 0; i < numberOfStreams; i++) {
+			const stream = streamsForSeg[`stream${i + 1}`].stream;
+			const image = tf.browser.fromPixels(stream);
+			result.push(image);
+		}
+
+		return result;
+	});
+	
+	if (imageTensors.length > 0) {
+		imageTensors.forEach(t => t.dispose());	
+	}
+
+	imageTensors = newImageTensors;
+
+	await Promise.all(newImageTensors.map((t, i) => tf.browser.toPixels(t, streams[`stream${i + 1}`])));
+
+	requestAnimationFrame(captureStreams);
 }
 
 async function runNet() {
@@ -172,9 +172,6 @@ async function runNet() {
 
 		const stackedVertically = tf.concat3d(asRows, axis=0);
 
-		// Aspect ration of 1280 x 720 => 16:9
-		// const result = tf.concat3d(resultsPartTensors, axis = 1);
-		// const resized = tf.image.resizeBilinear(stackedVertically, [360, 640]);
 		// const resized = tf.image.resizeBilinear(stackedVertically, [600, 800]);
 		const resized = tf.image.resizeBilinear(stackedVertically, [768, 1024]);
 
@@ -185,7 +182,7 @@ async function runNet() {
 
 	finalResult.dispose();
 
-	runNet();
+	requestAnimationFrame(runNet);
 }
 
 const numberOfStreams = 2;
@@ -194,15 +191,16 @@ function getPartSegmentationsByImage() {
 		const partSegmentationsAndImages = [];
 
 		for (let i = 0; i < numberOfStreams; i++) {
-			const stream = streamsForSeg[`stream${i +1}`].stream;
-			const image = tf.browser.fromPixels(stream);
+			if (imageTensors.length > 0) {
+				const image = imageTensors[i];
 
-			const { partSegmentation } = net.segmentPersonPartsActivation(image, 0.5);
+				const { partSegmentation } = net.segmentPersonPartsActivation(image, 1);
 
-			partSegmentationsAndImages.push({
-				image,
-				partSegmentation
-			});
+				partSegmentationsAndImages.push({
+					image,
+					partSegmentation
+				});
+			}
 		}
 
 		return partSegmentationsAndImages;

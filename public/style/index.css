@@ -5,7 +5,7 @@
 	border-color: silver;
 	border-style: solid;
 	border-width: 3px;
-	height: 100vh;
+	height: 99vh;
 }
 
 #box1 {
@@ -42,7 +42,14 @@
 	position: relative;
 }
 
-.stream-cvs {
+#body {
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+/* .stream-cvs {
 	-webkit-transform: scaleX(-1);
 	transform: scaleX(-1);
-}
+} */
