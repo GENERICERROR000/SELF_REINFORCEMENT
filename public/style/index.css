@@ -2,7 +2,7 @@
 	display: grid;
 	grid-template-columns: 3fr 10fr 3fr;
 	grid-template-rows: 3fr 10fr 3fr;
-	border-color: silver;
+	border-color: black;
 	border-style: solid;
 	border-width: 3px;
 	height: 99vh;
@@ -25,10 +25,10 @@
 }
 
 .stream-container {
-	font-family: Monaco;
-	font-size: 14px;
+	font-family: monospace;
+	font-size: 20px;
 	text-align: center;
-	color: silver;
+	color: black;
 }
 
 .streams {

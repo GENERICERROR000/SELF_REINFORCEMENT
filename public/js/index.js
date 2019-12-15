@@ -159,7 +159,7 @@ async function runNet() {
 
 		const resultsPartTensors = [
 			['zero', 'head', 'zero'],
-			['leftArm', 'torso', 'rightArm'],
+			['rightArm', 'torso', 'leftArm'],
 			['zero', 'legs', 'zero']
 		];
 
@@ -209,7 +209,7 @@ function getPartSegmentationsByImage() {
 
 function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
 	return tf.tidy(() => {
-		const initial = tf.zeros([heightStream, widthStream, 3], 'int32');
+		const initial = tf.fill([heightStream, widthStream, 3], 255, 'int32');
 
 		if (partToSegment == "zero") {
 			return initial;
@@ -224,7 +224,11 @@ function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
 						const expandedMask = tf.expandDims(mask, depthDimension);
 						const image = partSegmentationsAndImage.image;
 						const maskedImage = image.mul(expandedMask);
-						const newResult = result.add(maskedImage);
+
+						const invertedMask = tf.logicalNot(expandedMask);
+						
+
+						const newResult = result.mul(invertedMask).add(maskedImage);
 
 						return newResult;
 					} else {
