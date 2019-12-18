@@ -72,7 +72,7 @@ const startPatchBoard = (ws) => {
 			if (prevSignal1 == x) {
 				noiseCheck1++;
 
-				if (stream1State != partName && noiseCheck1 == 3) {
+				if (stream1State != partName && noiseCheck1 == 4) {
 					sendToClient("stream1", partName);
 
 					console.log("");
@@ -96,7 +96,7 @@ const startPatchBoard = (ws) => {
 			if (prevSignal2 == x) {
 				noiseCheck2++;
 
-				if (stream2State != partName && noiseCheck2 == 3) {
+				if (stream2State != partName && noiseCheck2 == 4) {
 					sendToClient("stream2", partName);
 
 					console.log("");
@@ -121,7 +121,7 @@ const startPatchBoard = (ws) => {
 			if (prevSignal3 == x) {
 				noiseCheck3++;
 
-				if (stream3State != partName && noiseCheck3 == 3) {
+				if (stream3State != partName && noiseCheck3 == 4) {
 					sendToClient("stream3", partName);
 
 					console.log("");
@@ -145,7 +145,7 @@ const startPatchBoard = (ws) => {
 			if (prevSignal4 == x) {
 				noiseCheck4++;
 
-				if (stream4State != partName && noiseCheck4 == 3) {
+				if (stream4State != partName && noiseCheck4 == 4) {
 					sendToClient("stream4", partName);
 
 					console.log("");
@@ -176,12 +176,6 @@ const startPatchBoard = (ws) => {
 	}
 
 	const setAlert = (part, partTick, partName) => {
-		// TODO: TEST THIS (do I need my custom signal check)
-		// Level must be stable for 10 ms before an alert event is emitted.
-		part.glitchFilter(10000);
-
-
-
 		part.on('alert', (level, tick) => {
 			if (level == 1) {
 				partTick = tick;
@@ -206,7 +200,7 @@ const startPatchBoard = (ws) => {
 		display2.trigger(50, 1);
 		display3.trigger(75, 1);
 		display4.trigger(100, 1);
-	}, 100);
+	}, 250);
 
 }
 

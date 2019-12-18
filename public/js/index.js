@@ -1,8 +1,12 @@
 const bodyCvs = document.getElementById('body');
-const wsUrl = 'ws://192.168.1.9:5050';
+const wsUrl = 'ws://192.168.1.2:5050';
 // const wsUrl = `ws://${BASE_URL}:${BASE_PORT}`;
-const heightStream = 360;
-const widthStream = 640;
+// const heightStream = 360;
+// const widthStream = 640;
+const heightStream = 240;
+const widthStream = 320;
+
+const numberOfStreams = 4;
 
 let imageTensors = [];
 let ready = false;
@@ -35,11 +39,11 @@ const streamsForSeg = {
 };
 
 const state = {
-	stream1: "head",
-	stream2: "torso",
-	stream3: "arms",
-	stream4: "legs"
-};
+	head: "stream1",
+	torso: "stream2",
+	arms: "stream3",
+	legs: "stream4"
+}
 
 const partIdsForPart = {
 	'head': [0, 1],
@@ -51,21 +55,31 @@ const partIdsForPart = {
 
 // NOTE: -----> Setup System <-----
 
-setTimeout(() => setup(), 1000);
-setTimeout(() => loadStreams("stream1"), 5000);
-// setTimeout(() => loadStreams("stream2"), 10000);
-// setTimeout(() => loadStreams("stream3"), 15000);
-// setTimeout(() => {
-// 		ready = true
-// 		loadStreams("stream4")
-// 	}
-// , 20000);
+setTimeout(() => {
+	console.log("Setting Up")
+	setup()
+}, 1000);
+
+setTimeout(() => {
+	console.log("Connecting to Stream 1")
+	loadStreams("stream1")
+}, 5000);
+
+setTimeout(() => {
+	console.log("Connecting to Stream 2")
+	loadStreams("stream2")
+}, 10000);
+
+setTimeout(() => {
+	console.log("Connecting to Stream 3")
+	loadStreams("stream3")
+}, 15000);
 
 setTimeout(() => {
 		ready = true
-		loadStreams("stream2")
-	}
-, 10000);
+		console.log("Connecting to Stream 4")
+		loadStreams("stream4")
+}, 20000);
 
 // NOTE: -----> Setup Streams <-----
 
@@ -75,9 +89,9 @@ async function setup() {
 	// const uriStream_3 = "ws://stream3.local:8080";
 	// const uriStream_4 = "ws://stream4.local:8080";
 	const uriStream_1 = "ws://192.168.1.3:8080";
-	const uriStream_2 = "ws://192.168.1.5:8080";
-	const uriStream_3 = "ws://192.168.1.6:8080";
-	const uriStream_4 = "ws://192.168.1.7:8080";
+	const uriStream_2 = "ws://192.168.1.4:8080";
+	const uriStream_3 = "ws://192.168.1.8:8080";
+	const uriStream_4 = "ws://192.168.1.5:8080";
 
 	streams.stream1.getContext('2d');
 	streams.stream2.getContext('2d');
@@ -91,13 +105,13 @@ async function setup() {
 
 	streamsForSeg.stream1.holder = new WSAvcPlayer(streamsForSeg.stream1.stream, "2d");
 	streamsForSeg.stream2.holder = new WSAvcPlayer(streamsForSeg.stream2.stream, "2d");
-	// streamsForSeg.stream3.holder = new WSAvcPlayer(streamsForSeg.stream3.stream, "2d");
-	// streamsForSeg.stream4.holder = new WSAvcPlayer(streamsForSeg.stream4.stream, "2d");
+	streamsForSeg.stream3.holder = new WSAvcPlayer(streamsForSeg.stream3.stream, "2d");
+	streamsForSeg.stream4.holder = new WSAvcPlayer(streamsForSeg.stream4.stream, "2d");
 
 	streamsForSeg.stream1.holder.connect(uriStream_1);
 	streamsForSeg.stream2.holder.connect(uriStream_2);
-	// streamsForSeg.stream3.holder.connect(uriStream_3);
-	// streamsForSeg.stream4.holder.connect(uriStream_4);
+	streamsForSeg.stream3.holder.connect(uriStream_3);
+	streamsForSeg.stream4.holder.connect(uriStream_4);
 
 	net = await bodyPix.load({
 		architecture: 'ResNet50'
@@ -112,7 +126,7 @@ function fitToContainer(canvas, t) {
 	canvas.height = canvas.offsetHeight;
 }
 
-// NOTE: -----> Start Streams (Bootstrap) <-----
+// NOTE: -----> Start Streams <-----
 
 async function loadStreams(id) {
 	streamsForSeg[id].holder.playStream();
@@ -122,12 +136,16 @@ async function loadStreams(id) {
 	}
 }
 
+// NOTE: -----> Bootstrap <-----
+
 async function bootstrap() {
 	console.log("bootstrapping segmentation")
 
 	captureStreams();
 	runNet();
 }
+
+// NOTE: -----> Capture Streams (Display Raw Stream Too) <-----
 
 async function captureStreams() {
 	const newImageTensors = tf.tidy(() => {
@@ -153,6 +171,8 @@ async function captureStreams() {
 	requestAnimationFrame(captureStreams);
 }
 
+// NOTE: -----> BodyPix Segmentation <-----
+
 async function runNet() {
 	const finalResult = tf.tidy(() => {
 		const partSegmentationsAndImages = getPartSegmentationsByImage();
@@ -173,7 +193,10 @@ async function runNet() {
 		const stackedVertically = tf.concat3d(asRows, axis=0);
 
 		// const resized = tf.image.resizeBilinear(stackedVertically, [600, 800]);
-		const resized = tf.image.resizeBilinear(stackedVertically, [768, 1024]);
+		// const resized = tf.image.resizeBilinear(stackedVertically, [576, 1024]);
+		// const resized = tf.image.resizeBilinear(stackedVertically, [720, 1280]);
+		// const resized = tf.image.resizeBilinear(stackedVertically, [768, 1366]);
+		const resized = tf.image.resizeBilinear(stackedVertically, [1000, 1280]);
 
 		return resized;
 	})
@@ -185,7 +208,6 @@ async function runNet() {
 	requestAnimationFrame(runNet);
 }
 
-const numberOfStreams = 2;
 function getPartSegmentationsByImage() {
 	return tf.tidy(() => {
 		const partSegmentationsAndImages = [];
@@ -214,29 +236,29 @@ function createResultTensorForPart(partToSegment, partSegmentationsAndImages) {
 		if (partToSegment == "zero") {
 			return initial;
 		} else {
-			const result = partSegmentationsAndImages.reduce(
-				(result, partSegmentationsAndImage, i) => {
-					const partForStream = state[`stream${i +1}`];
+			const segResult = partSegmentationsAndImages.reduce(
 
-					if ((partForStream == partToSegment) || ((partToSegment == 'leftArm' || partToSegment == 'rightArm') && partForStream == 'arms')) {
+				(result, partSegmentationsAndImage, i) => {
+					const chosenPart = (partToSegment == 'leftArm' || partToSegment == 'rightArm') ? "arms" : partToSegment
+					const streamForPart = state[chosenPart]
+	
+					if (streamForPart == `stream${i + 1}`) {
 						const mask = buildMaskForPart(partToSegment, partSegmentationsAndImage.partSegmentation);
 						const depthDimension = 2;
 						const expandedMask = tf.expandDims(mask, depthDimension);
 						const image = partSegmentationsAndImage.image;
 						const maskedImage = image.mul(expandedMask);
-
 						const invertedMask = tf.logicalNot(expandedMask);
-						
-
 						const newResult = result.mul(invertedMask).add(maskedImage);
 
 						return newResult;
 					} else {
 						return result;
 					}
+
 				}, initial);
 
-			return result;
+			return segResult;
 		}
 	});
 }
@@ -284,21 +306,5 @@ wsPatchBoard.onmessage = function (event) {
 const handleMessage = (streamName, partName) => {
 	console.log(`Stream "${streamName}" is being segmented for: ${partName}`);
 
-	switch (streamName) {
-		case "stream1":	
-			state.stream1 = partName ;
-			break;
-		case "stream2":	
-			state.stream2 = partName;
-			break;
-		case "stream3":	
-			state.stream3 = partName;
-			break;
-		case "stream4":	
-			state.stream = partName;
-			break;
-		default:
-			console.log("Patch Board asked for an invalid change")
-			break;
-	}
+	state[partName] = streamName
 }
